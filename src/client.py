@@ -12,12 +12,13 @@ file that was distributed with this source code.
 @author     Han Bao
 @copyright  2004-2017 Avalara, Inc.
 @license    https://www.apache.org/licenses/LICENSE-2.0
-@version    TBD
 @link       https://github.com/avadev/AvaTax-REST-V2-Python-SDK
 """
 from requests.auth import HTTPBasicAuth
 from _str_version import str_type
+from sys import platform
 import client_methods
+import json
 import os
 
 
@@ -57,6 +58,8 @@ class AvataxClient(client_methods.Mixin):
                                                                 app_version,
                                                                 machine_name)
         self.client_header = {'X-Avalara-Client': self.client_id}
+        self._linux = True if platform == 'linux' or platform == 'linux2' or platform == 'darwin' else False
+        self._content_cache = None
 
     def add_credentials(self, username=None, password=None):
         """
@@ -79,33 +82,95 @@ class AvataxClient(client_methods.Mixin):
             self.auth = HTTPBasicAuth(username, password)
         return self
 
+    def with_retail_tax_content(self, path):
+        """Load tax content file in the path"""
+        if not isinstance(path, str_type):
+            raise ValueError('Path to file must be a string')
+
+        # path = os.path.abspath(path) # turn into absolute path if not so already
+        if self._linux:
+            file_path = os.path.join(path, 'cache.json')
+        else:
+            file_path = path + r'\cache.json'
+
+        if not os.path.isfile(file_path):
+            raise IndexError('No content cache file found, call sync_offline_content method to cache a content file from AvaTax')
+
+        with open(file_path) as json_data:
+            self._content_cache = json.load(json_data)
+
+        return self
+
+
+
 # to generate a client object on initialization of this file, uncomment the script below
-# if __name__ == '__main__':  # pragma no cover
-#     """Creating a client with credential, must have env variables username & password."""
-#     client = AvataxClient('my test app',
-#                           'ver 0.0',
-#                           'my test machine',
-#                           'sandbox')
-#     c = client.add_credentials(os.environ.get('USERNAME', ''),
-#                                os.environ.get('PASSWORD', ''))
-#     print(client.ping().text)
-#     tax_document = {
-#         'addresses': {'SingleLocation': {'city': 'Irvine',
-#                                          'country': 'US',
-#                                          'line1': '123 Main Street',
-#                                          'postalCode': '92615',
-#                                          'region': 'CA'}},
-#         'commit': False,
-#         'companyCode': 'DEFAULT',
-#         'currencyCode': 'USD',
-#         'customerCode': 'ABC',
-#         'date': '2017-04-12',
-#         'description': 'Yarn',
-#         'lines': [{'amount': 100,
-#                   'description': 'Yarn',
-#                    'itemCode': 'Y0001',
-#                    'number': '1',
-#                    'quantity': 1,
-#                    'taxCode': 'PS081282'}],
-#         'purchaseOrderNo': '2017-04-12-001',
-#         'type': 'SalesInvoice'}
+if __name__ == '__main__':  # pragma no cover
+    """Creating a client with credential, must have env variables username & password."""
+    client = AvataxClient('my test app',
+                          'ver 0.0',
+                          'my test machine',
+                          'sandbox')
+    c = client.add_credentials(os.environ.get('USERNAME', ''),
+                               os.environ.get('PASSWORD', ''))
+    print(client.ping().text)
+    tax_document = {
+        'addresses': {'SingleLocation': {'city': 'Irvine',
+                                         'country': 'US',
+                                         'line1': '123 Main Street',
+                                         'postalCode': '92615',
+                                         'region': 'CA'}},
+        'commit': False,
+        'companyCode': 'DEFAULT',
+        'currencyCode': 'USD',
+        'customerCode': 'ABC',
+        'date': '2017-04-12',
+        'description': 'Yarn',
+        'lines': [{'amount': 100,
+                  'description': 'Yarn',
+                   'itemCode': 'Y0001',
+                   'number': '1',
+                   'quantity': 1,
+                   'taxCode': 'PS081282'}],
+        'purchaseOrderNo': '2017-04-12-001',
+        'type': 'SalesInvoice'}
+
+    request_model = {
+        "companyCode": "DEFAULT",
+        "responseType": "Json",
+        "taxCodes": [
+            "P0000000"
+        ],
+        "locationCodes": [
+            "DEFAULT"
+        ]}
+
+    location_model =  {
+        "id": 56789,
+        "locationCode": "DEFAULT",
+        "description": "Bob's Artisan Pottery",
+        "addressTypeId": "Location",
+        "addressCategoryId": "MainOffice",
+        "line1": "2000 Main Street",
+        "city": "Irvine",
+        "county": "Orange",
+        "region": "CA",
+        "postalCode": "92614",
+        "country": "US",
+        "isDefault": True,
+        "isRegistered": True,
+        "dbaName": "Bob's Artisan Pottery",
+        "outletName": "Main Office",
+        "registeredDate": "2015-01-01T00:00:00",
+        "settings": [
+          {
+            "questionId": 17,
+            "value": "abcdefghij"
+          }
+        ]
+    }
+    path = '/Users/han.bao/avalara/api_call'
+
+
+
+
+
