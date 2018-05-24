@@ -20,6 +20,7 @@ from sys import platform
 import client_methods
 import json
 import os
+import csv
 
 
 class AvataxClient(client_methods.Mixin):
@@ -82,6 +83,48 @@ class AvataxClient(client_methods.Mixin):
             self.auth = HTTPBasicAuth(username, password)
         return self
 
+
+    def sync_offline_content(self, path, request_model, date):
+        """
+        Retrieve/refresh offline tax content for the specified company, location
+        
+        :param string path:   The absolute path to the directory at which you wish to store/load cache file
+        :param PointOfSaleDataRequestModel request_model:   The model that contains info on the company/location/taxCode 
+        More on this model: https://developer.avalara.com/api-reference/avatax/rest/v2/models/PointOfSaleDataRequestModel/
+        :param string date:   The date for which point-of-sale data would be calculated, example will be '2018-05-20'
+        """
+
+        if not isinstance(path, str_type):
+            raise ValueError('Path to file must be a string')
+
+        if not isinstance(date, str_type):
+            raise ValueError('Date must be a string')
+
+        if not isinstance(request_model, dict):
+            raise ValueError('The request model must be a python dictionary')
+
+        request_model['responseType'] = 'Json'  # ensure to fetch json object, this is necessary for the offline cal to work properly in this SDK
+
+        content_response = self.build_tax_content_file(request_model)
+        content_json = json.loads(content_response.content)
+        path_file_one = self._path_joiner(path, 'retailTaxContent.json')
+        with open(path_file_one, 'w+') as file_one:
+            json.dump(content_json, file_one)  # write and save json file
+
+
+        zipct_response = self.download_tax_rates_by_zip_code(date)
+        zipct_content = zipct_response.content.decode('utf-8')
+        cr = csv.reader(zipct_content.splitlines(), delimiter=',')
+        zipct_list = list(cr)
+        zipct_dict = self._zipct_helper(zipct_list)
+
+        path_file_two = self._path_joiner(path, 'zipRates.json')
+        with open(path_file_two, 'w+') as file_two:
+            json.dump(zipct_dict, file_two)
+
+        return self
+
+
     def with_retail_tax_content(self, path):
         """
         Load tax content file in the path.
@@ -91,9 +134,8 @@ class AvataxClient(client_methods.Mixin):
         if not isinstance(path, str_type):
             raise ValueError('Path to file must be a string')
         # path = os.path.abspath(path) # turn into absolute path if not so already
-        
-        file_path = self._path_joiner(path, 'cache.json')
 
+        file_path = self._path_joiner(path, 'retailTaxContent.json')
         if not os.path.isfile(file_path):
             raise IndexError('No content cache file found, call sync_offline_content method to cache a content file from AvaTax')
 
@@ -102,31 +144,11 @@ class AvataxClient(client_methods.Mixin):
 
         return self
 
-    def sync_offline_content(self, path, request_model):
-        """
-        Retrieve/refresh offline tax content for the specified company, location
         
-        :param string path:   The absolute path to the directory at which you wish to store/load cache file
-        :param PointOfSaleDataRequestModel request_model:   The model that contains info on the company/location/taxCode 
-        More on this model: https://developer.avalara.com/api-reference/avatax/rest/v2/models/PointOfSaleDataRequestModel/
-        """
-        if not isinstance(path, str_type):
-            raise ValueError('Path to file must be a string')
+    def with_zc_tax_content(self, path):
+        """."""
 
-        if not isinstance(request_model, dict):
-            raise ValueError('The request model must be a python dictionary')
 
-        request_model['responseType'] = 'Json'  # ensure to fetch json object, this is necessary for the offline cal to work properly in this SDK
-
-        response = self.build_tax_content_file(request_model)
-        response_json = json.loads(response.content)
-
-        file_path = self._path_joiner(path, 'cache.json')
-
-        with open(file_path, 'w+') as json_file:
-            json.dump(response_json, json_file)  # write and save json file
-
-        return self
 
 
     def _path_joiner(self, path, file_name):
@@ -135,8 +157,17 @@ class AvataxClient(client_methods.Mixin):
             output = os.path.join(path, file_name)
         else:
             output = path + r'\{}'.format(file_name)
-
         return output
+
+    def _zipct_helper(self, zip_list):
+        """Turn list of zipcode to dictionary for better lookup time."""
+        zip_dict = {}
+        for z in zip_list:
+            code = z.pop(0)
+            zip_dict[code] = z
+        return zip_dict
+
+
 
 # to generate a client object on initialization of this file, uncomment the script below
 if __name__ == '__main__':  # pragma no cover
