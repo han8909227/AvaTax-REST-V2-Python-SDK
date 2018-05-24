@@ -101,6 +101,29 @@ class AvataxClient(client_methods.Mixin):
 
         return self
 
+    def sync_offline_content(self, path, request_model):
+        """
+        Retrieve/refresh offline tax content for a given company
+        request model in this case is the PointOfSaleDataRequestModel https://developer.avalara.com/api-reference/avatax/rest/v2/models/PointOfSaleDataRequestModel/
+        """
+        if not isinstance(path, str_type):
+            raise ValueError('Path to file must be a string')
+
+        if not isinstance(request_model, dict):
+            raise ValueError('The request model must be a python dictionary')
+
+        response = self.build_tax_content_file(request_model)
+        response_json = json.loads(response.content)
+
+        if self._linux:
+            file_path = os.path.join(path, 'cache.json')
+        else:
+            file_path = path + r'\cache.json'
+
+        with open(file_path, 'w+') as json_file:
+            json.dump(response_json, json_file)
+
+        return self
 
 
 # to generate a client object on initialization of this file, uncomment the script below
