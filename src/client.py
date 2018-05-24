@@ -90,18 +90,15 @@ class AvataxClient(client_methods.Mixin):
         """
         if not isinstance(path, str_type):
             raise ValueError('Path to file must be a string')
-
         # path = os.path.abspath(path) # turn into absolute path if not so already
-        if self._linux:
-            file_path = os.path.join(path, 'cache.json')
-        else:
-            file_path = path + r'\cache.json'
+        
+        file_path = self._path_joiner(path, 'cache.json')
 
         if not os.path.isfile(file_path):
             raise IndexError('No content cache file found, call sync_offline_content method to cache a content file from AvaTax')
 
         with open(file_path) as json_data:
-            self._content_cache = json.load(json_data). # load tax content file to client
+            self._content_cache = json.load(json_data) # load tax content file to client
 
         return self
 
@@ -119,21 +116,27 @@ class AvataxClient(client_methods.Mixin):
         if not isinstance(request_model, dict):
             raise ValueError('The request model must be a python dictionary')
 
-        request_model['responseType'] = 'Json'. # ensure to fetch json object, this is necessary for the offline cal to work properly in this SDK
+        request_model['responseType'] = 'Json'  # ensure to fetch json object, this is necessary for the offline cal to work properly in this SDK
 
         response = self.build_tax_content_file(request_model)
         response_json = json.loads(response.content)
 
-        if self._linux:  # determine file path format in current os
-            file_path = os.path.join(path, 'cache.json')
-        else:
-            file_path = path + r'\cache.json'
+        file_path = self._path_joiner(path, 'cache.json')
 
         with open(file_path, 'w+') as json_file:
-            json.dump(response_json, json_file). # write and save json file
+            json.dump(response_json, json_file)  # write and save json file
 
         return self
 
+
+    def _path_joiner(self, path, file_name):
+        """Form full file path based on the directory path and filename."""
+        if self._linux:
+            output = os.path.join(path, file_name)
+        else:
+            output = path + r'\{}'.format(file_name)
+
+        return output
 
 # to generate a client object on initialization of this file, uncomment the script below
 if __name__ == '__main__':  # pragma no cover
