@@ -97,7 +97,7 @@ class AvataxClient(client_methods.Mixin):
             raise IndexError('No content cache file found, call sync_offline_content method to cache a content file from AvaTax')
 
         with open(file_path) as json_data:
-            self._content_cache = json.load(json_data)
+            self._content_cache = json.load(json_data). # load tax content file to client
 
         return self
 
@@ -112,16 +112,18 @@ class AvataxClient(client_methods.Mixin):
         if not isinstance(request_model, dict):
             raise ValueError('The request model must be a python dictionary')
 
+        request_model['responseType'] = 'Json'. # ensure to fetch json object, this is necessary for the offline cal to work properly in this SDK
+
         response = self.build_tax_content_file(request_model)
         response_json = json.loads(response.content)
 
-        if self._linux:
+        if self._linux:  # determine file path format in current os
             file_path = os.path.join(path, 'cache.json')
         else:
             file_path = path + r'\cache.json'
 
         with open(file_path, 'w+') as json_file:
-            json.dump(response_json, json_file)
+            json.dump(response_json, json_file). # write and save json file
 
         return self
 
