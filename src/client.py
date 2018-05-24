@@ -83,7 +83,11 @@ class AvataxClient(client_methods.Mixin):
         return self
 
     def with_retail_tax_content(self, path):
-        """Load tax content file in the path"""
+        """
+        Load tax content file in the path.
+        
+        :param string path:   The absolute path to the directory at which you wish to store/load cache file
+        """
         if not isinstance(path, str_type):
             raise ValueError('Path to file must be a string')
 
@@ -103,8 +107,11 @@ class AvataxClient(client_methods.Mixin):
 
     def sync_offline_content(self, path, request_model):
         """
-        Retrieve/refresh offline tax content for a given company
-        request model in this case is the PointOfSaleDataRequestModel https://developer.avalara.com/api-reference/avatax/rest/v2/models/PointOfSaleDataRequestModel/
+        Retrieve/refresh offline tax content for the specified company, location
+        
+        :param string path:   The absolute path to the directory at which you wish to store/load cache file
+        :param PointOfSaleDataRequestModel request_model:   The model that contains info on the company/location/taxCode 
+        More on this model: https://developer.avalara.com/api-reference/avatax/rest/v2/models/PointOfSaleDataRequestModel/
         """
         if not isinstance(path, str_type):
             raise ValueError('Path to file must be a string')
