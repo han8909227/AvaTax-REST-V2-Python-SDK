@@ -61,6 +61,8 @@ class AvataxClient(client_methods.Mixin):
         self.client_header = {'X-Avalara-Client': self.client_id}
         self._linux = True if platform == 'linux' or platform == 'linux2' or platform == 'darwin' else False
         self._content_cache = None
+        self._ziprates_cache = None
+        self._recTaskDir = None
 
     def add_credentials(self, username=None, password=None):
         """
@@ -120,7 +122,7 @@ class AvataxClient(client_methods.Mixin):
 
         path_file_two = self._path_joiner(path, 'zipRates.json')
         with open(path_file_two, 'w+') as file_two:
-            json.dump(zipct_dict, file_two)
+            json.dump(zipct_dict, file_two)  # save as json file
 
         return self
 
@@ -137,19 +139,48 @@ class AvataxClient(client_methods.Mixin):
 
         file_path = self._path_joiner(path, 'retailTaxContent.json')
         if not os.path.isfile(file_path):
-            raise IndexError('No content cache file found, call sync_offline_content method to cache a content file from AvaTax')
+            raise IndexError('No content cache file found, call sync_offline_content method to cache files from AvaTax')
 
         with open(file_path) as json_data:
             self._content_cache = json.load(json_data) # load tax content file to client
 
         return self
 
+
+    def with_zipcode_tax_content(self, path):
+        """
+        Load zip code rates file in the path.
+
+        :param string path:   The absolute path to the directory at which you wish to store/load cache file
+        """
+        if not isinstance(path, str_type):
+            raise ValueError('Path to file must be a string')
+
+        file_path = self._path_joiner(path, 'ziprates.json')
+        if not os.path.isfile(file_path):
+            raise IndexError('No content cache file found, call sync_offline_content method to cache a files from AvaTax')
+
+        with open(file_path) as json_data:
+            self._ziprates_cache = json.load(json_data) # load tax content file to client
+
+        return self
+
+    def with_periodic_reconciliation_task(self, path):
+        """
+        Creates folder in the path directory to store/track failed transaction calls, in terms initiates a task to reconcilliation later
+
+        :param string path:   The absolute path to the directory at which you wish to store/load failed calls
+        """
+        if not isinstance(path, str_type):
+            raise ValueError('Path to file must be a string')
+
+        taskDir = path + '/reconcilliationTasks'
+        if not os.path.exists(taskDir):
+            os.makedirs(taskDir)
+        self._recTaskDir = taskDir
+
+        return self
         
-    def with_zc_tax_content(self, path):
-        """."""
-
-
-
 
     def _path_joiner(self, path, file_name):
         """Form full file path based on the directory path and filename."""
@@ -158,6 +189,7 @@ class AvataxClient(client_methods.Mixin):
         else:
             output = path + r'\{}'.format(file_name)
         return output
+
 
     def _zipct_helper(self, zip_list):
         """Turn list of zipcode to dictionary for better lookup time."""
