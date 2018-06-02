@@ -18,6 +18,7 @@ from requests.auth import HTTPBasicAuth
 from _str_version import str_type
 from sys import platform
 import client_methods
+import datetime
 import json
 import os
 import csv
@@ -63,6 +64,7 @@ class AvataxClient(client_methods.Mixin):
         self._content_cache = None
         self._ziprates_cache = None
         self._recTaskDir = None
+        self._default_comp = None
 
     def add_credentials(self, username=None, password=None):
         """
@@ -86,33 +88,30 @@ class AvataxClient(client_methods.Mixin):
         return self
 
 
-    def sync_offline_content(self, path, request_model, date):
+    def sync_offline_content(self, path, location_id, company_id=None, date=None):
         """
         Retrieve/refresh offline tax content for the specified company, location
         
         :param string path:   The absolute path to the directory at which you wish to store/load cache file
-        :param PointOfSaleDataRequestModel request_model:   The model that contains info on the company/location/taxCode 
-        More on this model: https://developer.avalara.com/api-reference/avatax/rest/v2/models/PointOfSaleDataRequestModel/
-        :param string date:   The date for which point-of-sale data would be calculated, example will be '2018-05-20'
+        :param location_id:   The ID number of the location to retrieve point-of-sale data.
+        :optional param company_id     The ID number of the company that owns this location. Defaults to your default company
+        :optional param string date:   The date for which point-of-sale data would be calculated, example will be '2018-05-20'. Defaults to today.
         """
 
         if not isinstance(path, str_type):
             raise ValueError('Path to file must be a string')
 
-        if not isinstance(date, str_type):
+        if date is None:
+            date = datetime.datetime.today().strftime('%Y-%m-%d')
+        elif not isinstance(date, str_type):
             raise ValueError('Date must be a string')
 
-        if not isinstance(request_model, dict):
-            raise ValueError('The request model must be a python dictionary')
-
-        request_model['responseType'] = 'Json'  # ensure to fetch json object, this is necessary for the offline cal to work properly in this SDK
-
-        content_response = self.build_tax_content_file(request_model)
+        default_comp = self._get_default_comp()
+        content_response = self.build_tax_content_file_for_location(default_comp['id'], location_id)
         content_json = json.loads(content_response.content)
         path_file_one = self._path_joiner(path, 'retailTaxContent.json')
         with open(path_file_one, 'w+') as file_one:
             json.dump(content_json, file_one)  # write and save json file
-
 
         zipct_response = self.download_tax_rates_by_zip_code(date)
         zipct_content = zipct_response.content.decode('utf-8')
@@ -165,6 +164,7 @@ class AvataxClient(client_methods.Mixin):
 
         return self
 
+
     def with_periodic_reconciliation_task(self, path):
         """
         Creates folder in the path directory to store/track failed transaction calls, in terms initiates a task to reconcilliation later
@@ -198,6 +198,19 @@ class AvataxClient(client_methods.Mixin):
             code = z.pop(0)
             zip_dict[code] = z
         return zip_dict
+
+
+    def _get_default_comp(self):
+        """Retrieve the default company info for this client."""
+        if self._default_comp:
+            return self._default_comp
+        response = self.query_companies()
+        companies = response.json()['value']
+        for c in companies:
+            if c['isDefault']:
+                self._default_comp = c
+                break
+        return self._default_comp
 
 
 
