@@ -10,7 +10,7 @@ file that was distributed with this source code.
 @author     Phil Werner
 @author     Adrienne Karnoski
 @author     Han Bao
-@copyright  2004-2017 Avalara, Inc.
+@copyright  2004-2018 Avalara, Inc.
 @license    https://www.apache.org/licenses/LICENSE-2.0
 @link       https://github.com/avadev/AvaTax-REST-V2-Python-SDK
 """
