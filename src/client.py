@@ -20,6 +20,7 @@ from sys import platform
 import client_methods
 import datetime
 import json
+import glob
 import os
 import csv
 
@@ -61,10 +62,10 @@ class AvataxClient(client_methods.Mixin):
                                                                 machine_name)
         self.client_header = {'X-Avalara-Client': self.client_id}
         self._linux = True if platform == 'linux' or platform == 'linux2' or platform == 'darwin' else False
-        self._content_cache = None
-        self._ziprates_cache = None
-        self._recTaskDir = None
-        self._default_comp = None
+        self._content_cache = None   # use for offline tax calculation
+        self._ziprates_cache = None  # use for offline tax calculation
+        self._recTaskDir = None    # use for offline tax calculation
+        self._default_comp = None  # use for offline tax calculation
 
     def add_credentials(self, username=None, password=None):
         """
@@ -119,8 +120,6 @@ class AvataxClient(client_methods.Mixin):
         cr = csv.reader(zipct_content.splitlines(), delimiter=',')
         zipct_list = list(cr)
         zipct_dict = self._zipct_helper(zipct_list)
-
-
         zip_path = self._path_joiner(zip_dir, 'zipRates.json')
         with open(zip_path, 'w+') as file_two:
             json.dump(zipct_dict, file_two)  # save as json file
@@ -128,21 +127,25 @@ class AvataxClient(client_methods.Mixin):
         return self
 
 
-    def with_retail_tax_content(self, path):
+    def with_retail_tax_content(self, content_dir):
         """
         Load tax content file in the path.
         
-        :param string path:   The absolute path to the directory at which you wish to store/load cache file
+        :param string content_dir:   The absolute path to the directory at which you wish to store/load the Content cache file(s)
         """
-        if not isinstance(path, str_type):
+        if not isinstance(content_dir, str_type):
             raise ValueError('Path to file must be a string')
-        # path = os.path.abspath(path) # turn into absolute path if not so already
 
-        file_path = self._path_joiner(path, 'retailTaxContent.json')
-        if not os.path.isfile(file_path):
+        # file_path = self._path_joiner(path, 'retailTaxContent.json')
+
+
+
+
+        recent_file = self._get_most_recent_file(content_dir, '*retailTaxContent.json')
+        if not os.path.isfile(recent_file):
             raise IndexError('No content cache file found, call sync_offline_content method to cache files from AvaTax')
 
-        with open(file_path) as json_data:
+        with open(recent_file) as json_data:
             self._content_cache = json.load(json_data) # load tax content file to client
 
         return self
@@ -167,21 +170,21 @@ class AvataxClient(client_methods.Mixin):
         return self
 
 
-    def with_periodic_reconciliation_task(self, path):
-        """
-        Creates folder in the path directory to store/track failed transaction calls, in terms initiates a task to reconcilliation later
+    # def with_periodic_reconciliation_task(self, path):
+    #     """
+    #     Creates folder in the path directory to store/track failed transaction calls, in terms initiates a task to reconcilliation later
 
-        :param string path:   The absolute path to the directory at which you wish to store/load failed calls
-        """
-        if not isinstance(path, str_type):
-            raise ValueError('Path to file must be a string')
+    #     :param string path:   The absolute path to the directory at which you wish to store/load failed calls
+    #     """
+    #     if not isinstance(path, str_type):
+    #         raise ValueError('Path to file must be a string')
 
-        taskDir = path + '/reconcilliationTasks'
-        if not os.path.exists(taskDir):
-            os.makedirs(taskDir)
-        self._recTaskDir = taskDir
+    #     taskDir = path + '/reconcilliationTasks'
+    #     if not os.path.exists(taskDir):
+    #         os.makedirs(taskDir)
+    #     self._recTaskDir = taskDir
 
-        return self
+    #     return self
         
 
     def _path_joiner(self, path, file_name):
@@ -215,6 +218,24 @@ class AvataxClient(client_methods.Mixin):
                 self._default_comp = c
                 break
         return self._default_comp
+
+
+    def _get_most_recent_file(self, dir_path, file_type):
+        """Return the most recently edited/created file in the directory."""
+        all_files = glob.glob(self._path_joiner(dir_path, file_type))
+        t_date = datetime.datetime.today().strftime('%Y%m%d')
+        biggest = 0
+        output_file_path = ''
+
+        for f in all_files:
+            stored_date = f.split('/')[-1].split('_')[-2]  # retrieve the date in file name
+            diff = int(t_date) - int(stored_date)
+            if biggest >= diff:  # if newer file exist
+                biggest = diff
+                output_file_path = f
+        return output_file_path
+
+
 
 
 
