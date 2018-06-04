@@ -88,18 +88,19 @@ class AvataxClient(client_methods.Mixin):
         return self
 
 
-    def sync_offline_content(self, path, location_id, company_id=None, date=None):
+    def sync_offline_content(self, content_dir, zip_dir, location_id, company_id=None, date=None):
         """
         Retrieve/refresh offline tax content for the specified company, location
         
-        :param string path:   The absolute path to the directory at which you wish to store/load cache file
+        :param string content_dir The absolute path to the directory at which you wish to store/load Tax Content cache file
+        :param string zip_dir:   The absolute path to the directory at which you wish to store/load Zip Rates cache file
         :param location_id:   The ID number of the location to retrieve point-of-sale data.
         :optional param company_id     The ID number of the company that owns this location. Defaults to your default company
         :optional param string date:   The date for which point-of-sale data would be calculated, example will be '2018-05-20'. Defaults to today.
         """
 
-        if not isinstance(path, str_type):
-            raise ValueError('Path to file must be a string')
+        if not all(isinstance(i, str_type) for i in [content_dir, zip_dir]):
+            raise ValueError('Directory path(s) must be a string')
 
         if date is None:
             date = datetime.datetime.today().strftime('%Y-%m-%d')
@@ -109,8 +110,8 @@ class AvataxClient(client_methods.Mixin):
         default_comp = self._get_default_comp()
         content_response = self.build_tax_content_file_for_location(default_comp['id'], location_id)
         content_json = json.loads(content_response.content)
-        path_file_one = self._path_joiner(path, 'retailTaxContent.json')
-        with open(path_file_one, 'w+') as file_one:
+        content_path = self._path_joiner(content_dir, 'retailTaxContent.json')
+        with open(content_path, 'w+') as file_one:
             json.dump(content_json, file_one)  # write and save json file
 
         zipct_response = self.download_tax_rates_by_zip_code(date)
@@ -119,8 +120,9 @@ class AvataxClient(client_methods.Mixin):
         zipct_list = list(cr)
         zipct_dict = self._zipct_helper(zipct_list)
 
-        path_file_two = self._path_joiner(path, 'zipRates.json')
-        with open(path_file_two, 'w+') as file_two:
+
+        zip_path = self._path_joiner(zip_dir, 'zipRates.json')
+        with open(zip_path, 'w+') as file_two:
             json.dump(zipct_dict, file_two)  # save as json file
 
         return self
@@ -183,7 +185,9 @@ class AvataxClient(client_methods.Mixin):
         
 
     def _path_joiner(self, path, file_name):
-        """Form full file path based on the directory path and filename."""
+        """Form full file path based on the directory path, filename and date."""
+        today_date = datetime.datetime.today().strftime('%Y%m%d')
+        file_name = today_date + '_' + file_name
         if self._linux:
             output = os.path.join(path, file_name)
         else:
@@ -279,7 +283,8 @@ if __name__ == '__main__':  # pragma no cover
           }
         ]
     }
-    path = '/Users/han.bao/avalara/api_call'
+    zipPath = '/Users/han.bao/avalara/api_call/zipRates'
+    contentPath = '/Users/han.bao/avalara/api_call/myTaxContents'
 
 
 
