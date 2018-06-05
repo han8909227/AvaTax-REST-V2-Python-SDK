@@ -111,15 +111,23 @@ class AvataxClient(client_methods.Mixin):
         default_comp = self._get_default_comp()
         content_response = self.build_tax_content_file_for_location(default_comp['id'], location_id)
         content_json = json.loads(content_response.content)
+
         content_path = self._path_joiner(content_dir, 'retailTaxContent.json')
         with open(content_path, 'w+') as file_one:
             json.dump(content_json, file_one)  # write and save json file
 
-        zipct_response = self.download_tax_rates_by_zip_code(date)
-        zipct_content = zipct_response.content.decode('utf-8')
-        cr = csv.reader(zipct_content.splitlines(), delimiter=',')
-        zipct_list = list(cr)
-        zipct_dict = self._zipct_helper(zipct_list)
+
+        zipct_list = []
+        while len(zipct_list) < 100:  # to ensure the response 'your csv file in build' is ignored
+            zipct_response = self.download_tax_rates_by_zip_code(date)
+            zipct_content = zipct_response.content.decode('utf-8')
+            cr = csv.reader(zipct_content.splitlines(), delimiter=',')
+            zipct_list = list(cr)
+            count += 1
+            if count > 10:  # prevent infinite loop if AvaTax is responding with error
+                raise Exception('Failed to fetch zip rate data from AvaTax API')
+
+        zipct_dict = self._zipct_helper(zipct_list)  # turn rates into dictionary
         zip_path = self._path_joiner(zip_dir, 'zipRates.json')
         with open(zip_path, 'w+') as file_two:
             json.dump(zipct_dict, file_two)  # save as json file
@@ -136,12 +144,9 @@ class AvataxClient(client_methods.Mixin):
         if not isinstance(content_dir, str_type):
             raise ValueError('Path to file must be a string')
 
-        # file_path = self._path_joiner(path, 'retailTaxContent.json')
+        filter_string = content_dir + '/*retailTaxContent.json'
+        recent_file = self._get_most_recent_file(filter_string)  # get the most recently cahced content file
 
-
-
-
-        recent_file = self._get_most_recent_file(content_dir, '*retailTaxContent.json')
         if not os.path.isfile(recent_file):
             raise IndexError('No content cache file found, call sync_offline_content method to cache files from AvaTax')
 
@@ -151,20 +156,22 @@ class AvataxClient(client_methods.Mixin):
         return self
 
 
-    def with_zipcode_tax_content(self, path):
+    def with_zipcode_tax_content(self, zip_dir):
         """
         Load zip code rates file in the path.
 
-        :param string path:   The absolute path to the directory at which you wish to store/load cache file
+        :param string zip_dir:   The absolute path to the directory at which you wish to store/load Zip Rates cache file
         """
-        if not isinstance(path, str_type):
+        if not isinstance(zip_dir, str_type):
             raise ValueError('Path to file must be a string')
 
-        file_path = self._path_joiner(path, 'ziprates.json')
-        if not os.path.isfile(file_path):
+        filter_string = zip_dir + '/*zipRates.json' # filter out non zipRate files
+        recent_file = self._get_most_recent_file(filter_string)  # get the most recently cahced zip rate file
+
+        if not os.path.isfile(recent_file):
             raise IndexError('No content cache file found, call sync_offline_content method to cache a files from AvaTax')
 
-        with open(file_path) as json_data:
+        with open(recent_file) as json_data:
             self._ziprates_cache = json.load(json_data) # load tax content file to client
 
         return self
@@ -220,23 +227,19 @@ class AvataxClient(client_methods.Mixin):
         return self._default_comp
 
 
-    def _get_most_recent_file(self, dir_path, file_type):
+    def _get_most_recent_file(self, dir_filter):
         """Return the most recently edited/created file in the directory."""
-        all_files = glob.glob(self._path_joiner(dir_path, file_type))
-        t_date = datetime.datetime.today().strftime('%Y%m%d')
-        biggest = 0
-        output_file_path = ''
+        all_files = glob.glob(dir_filter)  # all files of the dir in list 
+        files_by_date = []
 
         for f in all_files:
             stored_date = f.split('/')[-1].split('_')[-2]  # retrieve the date in file name
-            diff = int(t_date) - int(stored_date)
-            if biggest >= diff:  # if newer file exist
-                biggest = diff
-                output_file_path = f
-        return output_file_path
+            files_by_date.append(int(stored_date))
 
-
-
+        d = max(files_by_date)
+        idx = files_by_date.index(d)
+        output = all_files[idx]
+        return output
 
 
 # to generate a client object on initialization of this file, uncomment the script below
@@ -305,7 +308,7 @@ if __name__ == '__main__':  # pragma no cover
         ]
     }
     zipPath = '/Users/han.bao/avalara/api_call/zipRates'
-    contentPath = '/Users/han.bao/avalara/api_call/myTaxContents'
+    contentPath = '/Users/han.bao/avalara/api_call/myTaxContents/'
 
 
 
