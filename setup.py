@@ -9,6 +9,7 @@ setup(
     py_modules=[
         'client',
         'client_methods',
+        'client_resiliency',
         'transaction_builder',
         'transaction_builder_methods',
         '_str_version'
