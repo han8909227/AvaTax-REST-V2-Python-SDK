@@ -133,7 +133,7 @@ class AvataxClient(client_methods.Mixin):
         zipct_dict = self._zipct_helper(zipct_list)  # turn rates into dictionary
         zip_path = self._path_joiner(zip_dir, 'zipRates.json')
         with open(zip_path, 'w+') as file_two:
-            json.dump(zipct_dict, file_two)  # save as json file
+            json.dump(zipct_dict, file_two)  # save dict as json file
 
         return self
 
