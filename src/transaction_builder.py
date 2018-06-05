@@ -50,3 +50,6 @@ class TransactionBuilder(transaction_builder_methods.Mixin):
             'date': '{}'.format(datetime.utcnow()),
             'lines': []
         }
+
+
+        

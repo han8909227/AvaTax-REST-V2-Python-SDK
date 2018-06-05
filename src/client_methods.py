@@ -6099,7 +6099,7 @@ class Mixin:
     
       :return PingResultModel
     """
-    def ping(self):
+    def ping(self, timeout=None):
         return requests.get('{}/api/v2/utilities/ping'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, timeout=timeout if timeout else 10)
  
