@@ -8,47 +8,48 @@ import csv
 class Mixin:
     """Mixin for resiliency/offline tax calculation codes"""
 
-    def sync_offline_content(self, content_dir, zip_dir, loc_id, company_id=None, date=None):
+    def sync_offline_content(self, company_id=None, date=None):
         """
         Retrieve/refresh offline tax content for the specified company, location
         
-        :param string content_dir The absolute path to the directory at which you wish to store/load Tax Content cache file
-        :param string zip_dir:   The absolute path to the directory at which you wish to store/load Zip Rates cache file
-        :param loc_id:   The ID number of the location to retrieve point-of-sale data.
         :optional param company_id     The ID number of the company that owns this location. Defaults to your default company
         :optional param string date:   The date for which point-of-sale data would be calculated, example will be '2018-05-20'. Defaults to today.
         """
-        if not all(isinstance(i, str_type) for i in [content_dir, zip_dir]):
-            raise ValueError('Directory path(s) must be a string')
+        if not self._content_dir and not self._zip_dir:
+            raise ValueError('Must have at least one directory to store cache file, call with_retail_tax_content or with_zipcode_tax_content first')
+
         if date is None:
             date = datetime.datetime.today().strftime('%Y-%m-%d')
         elif not isinstance(date, str_type):
             raise ValueError('Date must be a string')
 
-        default_comp = self._get_default_comp()
-        content_response = self.build_tax_content_file_for_location(default_comp['id'], loc_id)
-        content_json = json.loads(content_response.content)
+        if self._content_dir and self._loc_id:  # true if with_retail_tax_content has been called
+            if not company_id:  # use default company's id if not provided
+                company_id = self._get_default_comp()['id']
 
-        content_path = self._path_joiner(content_dir, 'retailTaxContent.json', loc_id)
-        with open(content_path, 'w+') as file:
-            json.dump(content_json, file)  # write and save json file
+            content_response = self.build_tax_content_file_for_location(company_id, self._loc_id)
+            content_json = json.loads(content_response.content)
 
+            content_path = self._path_joiner(self._content_dir, 'retailTaxContent.json', self._loc_id)
+            with open(content_path, 'w+') as file:
+                json.dump(content_json, file)  # write and save json file
 
-        zipct_list = []
-        count = 0
-        while len(zipct_list) < 100:  # to ensure the response 'your csv file is in build' is ignored
-            zipct_response = self.download_tax_rates_by_zip_code(date)
-            zipct_content = zipct_response.content.decode('utf-8')
-            cr = csv.reader(zipct_content.splitlines(), delimiter=',')
-            zipct_list = list(cr)
-            count += 1
-            if count > 10:  # prevent infinite loop if AvaTax is responding with error
-                raise Exception('Failed to fetch zip rate data from AvaTax API')
+        if self._zip_dir:  # true if with_zipcode_tax_content has been called
+            zipct_list = []
+            count = 0
+            while len(zipct_list) < 100:  # to ensure the response 'your csv file is in build' is ignored
+                zipct_response = self.download_tax_rates_by_zip_code(date)
+                zipct_content = zipct_response.content.decode('utf-8')
+                cr = csv.reader(zipct_content.splitlines(), delimiter=',')
+                zipct_list = list(cr)
+                count += 1
+                if count > 10:  # prevent infinite loop if AvaTax is responding with error
+                    raise Exception('Failed to fetch zip rate data from AvaTax API')
 
-        zipct_dict = self._zipct_helper(zipct_list)  # turn rates into dictionary
-        zip_path = self._path_joiner(zip_dir, 'zipRates.json')
-        with open(zip_path, 'w+') as file_two:
-            json.dump(zipct_dict, file_two)  # save dict as json file
+            zipct_dict = self._zipct_helper(zipct_list)  # turn rates into dictionary
+            zip_path = self._path_joiner(self._zip_dir, 'zipRates.json')
+            with open(zip_path, 'w+') as file_two:
+                json.dump(zipct_dict, file_two)  # save dict as json file
 
         return self
 
@@ -65,14 +66,18 @@ class Mixin:
         if not isinstance(loc_id, int):
             raise ValueError('Location ID must be in integer')
 
-        loc_file = content_dir + str(loc_id) + '_retailTaxContent.json'  # abs path to cached file for this loc
+        self._content_dir = content_dir
+        self._loc_id = loc_id
 
+        loc_file = content_dir + str(loc_id) + '_retailTaxContent.json'  # abs path to cached file for this loc
         if not os.path.isfile(loc_file): 
-            raise IndexError('No content cache file found, call sync_offline_content method to cache files from AvaTax')
+            print('Content direcotry stored succesfully! No content cache can be found, call sync_offline_content to fetch the latest content file')
+            return self
 
         with open(loc_file) as json_data:
             self._content_cache = json.load(json_data) # load tax content file to client
 
+        print('Retail tax content for location: ' + str(loc_id) + ' has been loaded succesfully')
         return self
 
 
@@ -85,15 +90,19 @@ class Mixin:
         if not isinstance(zip_dir, str_type):
             raise ValueError('Path to file must be a string')
 
+        self._zip_dir = zip_dir
         filter_string = zip_dir + '/*zipRates.json' # filter out non zipRate files
-        recent_file = self._get_most_recent_file(filter_string)  # get the most recently cahced zip rate file
 
-        if not os.path.isfile(recent_file):
-            raise IndexError('No content cache file found, call sync_offline_content method to cache a files from AvaTax')
+        try:
+            recent_file = self._get_most_recent_file(filter_string) 
+        except ImportError:
+            print('ZipRate direcotry stored succesfully! No ZipRate cache can be found, call sync_offline_content to fetch the latest content file')
+            return self
 
         with open(recent_file) as json_data:
             self._ziprates_cache = json.load(json_data) # load tax content file to client
 
+        print('Zipcode tax content has been loaded succesfully')
         return self
 
 
@@ -151,13 +160,22 @@ class Mixin:
     def _get_most_recent_file(self, dir_filter):
         """Return the most recently edited/created file in the directory."""
         all_files = glob.glob(dir_filter)  # all files of the dir in list 
-        files_by_date = []
+        # import pdb; pdb.set_trace()
+        if not all_files:
+            raise ImportError()
 
+        files_by_date = []
         for f in all_files:
-            stored_date = f.split('/')[-1].split('_')[-2]  # retrieve the date in file name
-            files_by_date.append(int(stored_date))
+            file_name = os.path.splitext(f)[0]
+            if 'zipRates' in file_name:  # if this file is a content cache
+                stored_date = f.split('/')[-1].split('_')[-2]  # retrieve the date in file name
+                files_by_date.append(int(stored_date))
+
+        if not files_by_date: 
+            raise ImportError()
 
         d = max(files_by_date)
         idx = files_by_date.index(d)
         output = all_files[idx]
         return output
+

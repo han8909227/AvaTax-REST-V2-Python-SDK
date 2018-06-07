@@ -64,6 +64,9 @@ class AvataxClient(client_methods.Mixin, client_resiliency.Mixin):
         self._ziprates_cache = None  # use for offline tax calculation
         self._recTaskDir = None    # use for offline tax calculation
         self._default_comp = None  # use for offline tax calculation
+        self._content_dir = None   # use for offline tax calculation
+        self._zip_dir = None       # use for offline tax calculation
+        self._loc_id = None        # use for offline tax calculation
 
     def add_credentials(self, username=None, password=None):
         """
