@@ -26,7 +26,7 @@ class AvataxClient(client_methods.Mixin, client_resiliency.Mixin):
     """Class for our Avatax client."""
 
     def __init__(self, app_name=None, app_version=None, machine_name=None,
-                 environment=None):
+                 environment=None, timeout_limit=None):
         """
         Initialize the sandbox client.
 
@@ -38,6 +38,7 @@ class AvataxClient(client_methods.Mixin, client_resiliency.Mixin):
             :param  string  machine_name: Name of machine you are working on
             :param  string  enviroment: Default enviroment is production,
                 input sandbox, for the sandbox API
+            :param  int/float The timeout limit for every call made by this client instance. (default: 10 sec)
         :return: object
         """
 
@@ -59,6 +60,7 @@ class AvataxClient(client_methods.Mixin, client_resiliency.Mixin):
                                                                 app_version,
                                                                 machine_name)
         self.client_header = {'X-Avalara-Client': self.client_id}
+        self.timeout_limit = timeout_limit 
         self._linux = True if platform == 'linux' or platform == 'linux2' or platform == 'darwin' else False
         self._content_cache = None   # use for offline tax calculation
         self._ziprates_cache = None  # use for offline tax calculation
@@ -67,6 +69,7 @@ class AvataxClient(client_methods.Mixin, client_resiliency.Mixin):
         self._content_dir = None   # use for offline tax calculation
         self._zip_dir = None       # use for offline tax calculation
         self._loc_id = None        # use for offline tax calculation
+
 
     def add_credentials(self, username=None, password=None):
         """

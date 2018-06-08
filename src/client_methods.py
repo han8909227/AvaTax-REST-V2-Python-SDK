@@ -23,7 +23,8 @@ class Mixin:
     """
     def account_reset_license_key(self, id_, model):
         return requests.post('{}/api/v2/accounts/{}/resetlicensekey'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Activate an account by accepting terms and conditions
@@ -43,7 +44,8 @@ class Mixin:
     """
     def activate_account(self, id_, model, include=None):
         return requests.post('{}/api/v2/accounts/{}/activate'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single account
@@ -59,7 +61,8 @@ class Mixin:
     """
     def get_account(self, id_, include=None):
         return requests.get('{}/api/v2/accounts/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Get configuration settings for this account
@@ -79,7 +82,8 @@ class Mixin:
     """
     def get_account_configuration(self, id_):
         return requests.get('{}/api/v2/accounts/{}/configuration'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Change configuration settings for this account
@@ -100,7 +104,8 @@ class Mixin:
     """
     def set_account_configuration(self, id_, model):
         return requests.post('{}/api/v2/accounts/{}/configuration'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve geolocation information for a specified address
@@ -126,7 +131,8 @@ class Mixin:
     """
     def resolve_address(self, include=None):
         return requests.get('{}/api/v2/addresses/resolve'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve geolocation information for a specified address
@@ -143,7 +149,8 @@ class Mixin:
     """
     def resolve_address_post(self, model):
         return requests.post('{}/api/v2/addresses/resolve'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Approve an advanced rule script to run.
@@ -158,7 +165,8 @@ class Mixin:
     """
     def approve_advanced_rule_script(self, accountId, scriptType):
         return requests.post('{}/api/v2/accounts/{}/advancedrulescripts/{}/approve'.format(self.base_url, accountId, scriptType),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create an advanced rule.
@@ -175,7 +183,8 @@ class Mixin:
     """
     def create_advanced_rule_script(self, accountId, scriptType, include=None):
         return requests.post('{}/api/v2/accounts/{}/advancedrulescripts/{}'.format(self.base_url, accountId, scriptType),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a lookup table for an advanced rule
@@ -191,7 +200,8 @@ class Mixin:
     """
     def create_advanced_rule_table(self, accountId, csvTableName):
         return requests.post('{}/api/v2/accounts/{}/advancedruletables/{}'.format(self.base_url, accountId, csvTableName),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete an account's active advanced rule
@@ -206,7 +216,8 @@ class Mixin:
     """
     def delete_advanced_rule_script(self, accountId, scriptType):
         return requests.delete('{}/api/v2/accounts/{}/advancedrulescripts/{}'.format(self.base_url, accountId, scriptType),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a lookup table for an advanced rule.
@@ -221,7 +232,40 @@ class Mixin:
     """
     def delete_advanced_rule_table(self, accountId, csvTableName):
         return requests.delete('{}/api/v2/accounts/{}/advancedruletables/{}'.format(self.base_url, accountId, csvTableName),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
+
+    r"""
+    Disable an advanced rule so that it cannot be run.
+    
+    This API is available by invite only and implementation support is required.
+      Please contact your Customer Account Manager if you are interested in using
+      Advanced Rules in your AvaTax integration. ///
+    
+      :param accountId [int] 
+      :param scriptType [AdvancedRuleScriptType] The script transform type: Request or Response. (See AdvancedRuleScriptType::* for a list of allowable values)
+      :return AdvancedRuleScriptModel
+    """
+    def disable_advanced_rule_script(self, accountId, scriptType):
+        return requests.post('{}/api/v2/accounts/{}/advancedrulescripts/{}/disable'.format(self.base_url, accountId, scriptType),
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
+
+    r"""
+    Enable an approved advanced rule so that it can be run.
+    
+    This API is available by invite only and implementation support is required.
+      Please contact your Customer Account Manager if you are interested in using
+      Advanced Rules in your AvaTax integration.
+    
+      :param accountId [int] 
+      :param scriptType [AdvancedRuleScriptType] The script transform type: Request or Response. (See AdvancedRuleScriptType::* for a list of allowable values)
+      :return AdvancedRuleScriptModel
+    """
+    def enable_advanced_rule_script(self, accountId, scriptType):
+        return requests.post('{}/api/v2/accounts/{}/advancedrulescripts/{}/enable'.format(self.base_url, accountId, scriptType),
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Get an account's advanced rule script.
@@ -236,7 +280,8 @@ class Mixin:
     """
     def get_advanced_rule_script(self, accountId, scriptType):
         return requests.get('{}/api/v2/accounts/{}/advancedrulescripts/{}'.format(self.base_url, accountId, scriptType),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Get an advanced rule lookup table for an account
@@ -251,7 +296,8 @@ class Mixin:
     """
     def get_advanced_rule_table(self, accountId, csvTableName):
         return requests.get('{}/api/v2/accounts/{}/advancedruletables/{}'.format(self.base_url, accountId, csvTableName),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Get all advanced rule lookup tables for an account
@@ -265,7 +311,8 @@ class Mixin:
     """
     def get_advanced_rule_tables(self, accountId):
         return requests.get('{}/api/v2/accounts/{}/advancedruletables'.format(self.base_url, accountId),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Unapprove an advanced rule script so that it cannot be run.
@@ -280,7 +327,8 @@ class Mixin:
     """
     def unapprove_advanced_rule_script(self, accountId, scriptType):
         return requests.post('{}/api/v2/accounts/{}/advancedrulescripts/{}/unapprove'.format(self.base_url, accountId, scriptType),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new AvaFileForm
@@ -293,7 +341,8 @@ class Mixin:
     """
     def create_ava_file_forms(self, model):
         return requests.post('{}/api/v2/avafileforms'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single AvaFileForm
@@ -305,7 +354,8 @@ class Mixin:
     """
     def delete_ava_file_form(self, id_):
         return requests.delete('{}/api/v2/avafileforms/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single AvaFileForm
@@ -317,7 +367,8 @@ class Mixin:
     """
     def get_ava_file_form(self, id_):
         return requests.get('{}/api/v2/avafileforms/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all AvaFileForms
@@ -334,7 +385,8 @@ class Mixin:
     """
     def query_ava_file_forms(self, include=None):
         return requests.get('{}/api/v2/avafileforms'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a AvaFileForm
@@ -348,7 +400,8 @@ class Mixin:
     """
     def update_ava_file_form(self, id_, model):
         return requests.put('{}/api/v2/avafileforms/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new batch
@@ -371,12 +424,20 @@ class Mixin:
     """
     def create_batches(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/batches'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single batch
     
-    
+    Marks the batch identified by this URL as deleted.
+      If you attempt to delete a batch that is being processed, you will receive an error message.
+      Deleting a batch does not delete any transactions that were created by importing the batch.
+      Because the batch system processes with a degree of concurrency, and
+      because of batch sizes in the queue vary, AvaTax API is unable to accurately
+      predict when a batch will complete. If high performance processing is
+      required, please use the
+      [CreateTransaction API](https://developer.avalara.com/api-reference/avatax/rest/v2/methods/Transactions/CreateTransaction/).
     
       :param companyId [int] The ID of the company that owns this batch.
       :param id_ [int] The ID of the batch to delete.
@@ -384,7 +445,8 @@ class Mixin:
     """
     def delete_batch(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/batches/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Download a single batch file
@@ -398,7 +460,8 @@ class Mixin:
     """
     def download_batch(self, companyId, batchId, id_):
         return requests.get('{}/api/v2/companies/{}/batches/{}/files/{}/attachment'.format(self.base_url, companyId, batchId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single batch
@@ -422,7 +485,8 @@ class Mixin:
     """
     def get_batch(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/batches/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all batches for this company
@@ -454,7 +518,8 @@ class Mixin:
     """
     def list_batches_by_company(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/batches'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all batches
@@ -483,7 +548,8 @@ class Mixin:
     """
     def query_batches(self, include=None):
         return requests.get('{}/api/v2/batches'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a CertExpress invitation
@@ -508,7 +574,8 @@ class Mixin:
     """
     def create_cert_express_invitation(self, companyId, customerCode, model):
         return requests.post('{}/api/v2/companies/{}/customers/{}/certexpressinvites'.format(self.base_url, companyId, customerCode),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single CertExpress invitation
@@ -534,7 +601,8 @@ class Mixin:
     """
     def get_cert_express_invitation(self, companyId, customerCode, id_, include=None):
         return requests.get('{}/api/v2/companies/{}/customers/{}/certexpressinvites/{}'.format(self.base_url, companyId, customerCode, id_),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List CertExpress invitations
@@ -562,7 +630,8 @@ class Mixin:
     """
     def list_cert_express_invitations(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/certexpressinvites'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create certificates for this company
@@ -589,7 +658,8 @@ class Mixin:
     """
     def create_certificates(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/certificates'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Revoke and delete a certificate
@@ -611,7 +681,8 @@ class Mixin:
     """
     def delete_certificate(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/certificates/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Download an image for this certificate
@@ -636,7 +707,8 @@ class Mixin:
     """
     def download_certificate_image(self, companyId, id_, include=None):
         return requests.get('{}/api/v2/companies/{}/certificates/{}/attachment'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single certificate
@@ -662,7 +734,8 @@ class Mixin:
     """
     def get_certificate(self, companyId, id_, include=None):
         return requests.get('{}/api/v2/companies/{}/certificates/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Check a company's exemption certificate status.
@@ -679,7 +752,8 @@ class Mixin:
     """
     def get_certificate_setup(self, companyId):
         return requests.get('{}/api/v2/companies/{}/certificates/setup'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Link attributes to a certificate
@@ -703,7 +777,8 @@ class Mixin:
     """
     def link_attributes_to_certificate(self, companyId, id_, model):
         return requests.post('{}/api/v2/companies/{}/certificates/{}/attributes/link'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Link customers to a certificate
@@ -728,7 +803,8 @@ class Mixin:
     """
     def link_customers_to_certificate(self, companyId, id_, model):
         return requests.post('{}/api/v2/companies/{}/certificates/{}/customers/link'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all attributes applied to this certificate
@@ -751,7 +827,8 @@ class Mixin:
     """
     def list_attributes_for_certificate(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/certificates/{}/attributes'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List customers linked to this certificate
@@ -775,7 +852,8 @@ class Mixin:
     """
     def list_customers_for_certificate(self, companyId, id_, include=None):
         return requests.get('{}/api/v2/companies/{}/certificates/{}/customers'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all certificates for a company
@@ -804,7 +882,8 @@ class Mixin:
     """
     def query_certificates(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/certificates'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Request setup of exemption certificates for this company.
@@ -822,7 +901,8 @@ class Mixin:
     """
     def request_certificate_setup(self, companyId):
         return requests.post('{}/api/v2/companies/{}/certificates/setup'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Unlink attributes from a certificate
@@ -846,7 +926,8 @@ class Mixin:
     """
     def unlink_attributes_from_certificate(self, companyId, id_, model):
         return requests.post('{}/api/v2/companies/{}/certificates/{}/attributes/unlink'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Unlink customers from a certificate
@@ -872,7 +953,8 @@ class Mixin:
     """
     def unlink_customers_from_certificate(self, companyId, id_, model):
         return requests.post('{}/api/v2/companies/{}/certificates/{}/customers/unlink'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single certificate
@@ -894,7 +976,8 @@ class Mixin:
     """
     def update_certificate(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/certificates/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Upload an image or PDF attachment for this certificate
@@ -918,7 +1001,8 @@ class Mixin:
     """
     def upload_certificate_image(self, companyId, id_):
         return requests.post('{}/api/v2/companies/{}/certificates/{}/attachment'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Change the filing status of this company
@@ -939,7 +1023,8 @@ class Mixin:
     """
     def change_filing_status(self, id_, model):
         return requests.post('{}/api/v2/companies/{}/filingstatus'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Quick setup for a company with a single physical address
@@ -960,7 +1045,8 @@ class Mixin:
     """
     def company_initialize(self, model):
         return requests.post('{}/api/v2/companies/initialize'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create new companies
@@ -974,7 +1060,8 @@ class Mixin:
     """
     def create_companies(self, model):
         return requests.post('{}/api/v2/companies'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Request managed returns funding setup for a company
@@ -996,7 +1083,8 @@ class Mixin:
     """
     def create_funding_request(self, id_, model):
         return requests.post('{}/api/v2/companies/{}/funding/setup'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single company
@@ -1008,7 +1096,8 @@ class Mixin:
     """
     def delete_company(self, id_):
         return requests.delete('{}/api/v2/companies/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Check the funding configuration of a company
@@ -1023,7 +1112,8 @@ class Mixin:
     """
     def funding_configuration_by_company(self, companyId):
         return requests.get('{}/api/v2/companies/{}/funding/configuration'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Check the funding configuration of a company
@@ -1039,7 +1129,8 @@ class Mixin:
     """
     def funding_configurations_by_company_and_currency(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/funding/configurations'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single company
@@ -1062,7 +1153,8 @@ class Mixin:
     """
     def get_company(self, id_, include=None):
         return requests.get('{}/api/v2/companies/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Get configuration settings for this company
@@ -1082,7 +1174,8 @@ class Mixin:
     """
     def get_company_configuration(self, id_):
         return requests.get('{}/api/v2/companies/{}/configuration'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Get this company's filing status
@@ -1103,7 +1196,8 @@ class Mixin:
     """
     def get_filing_status(self, id_):
         return requests.get('{}/api/v2/companies/{}/filingstatus'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Check managed returns funding status for a company
@@ -1118,7 +1212,8 @@ class Mixin:
     """
     def list_funding_requests_by_company(self, id_):
         return requests.get('{}/api/v2/companies/{}/funding'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a list of MRS Companies with account
@@ -1130,7 +1225,8 @@ class Mixin:
     """
     def list_mrs_companies(self):
         return requests.get('{}/api/v2/companies/mrs'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all companies
@@ -1158,7 +1254,8 @@ class Mixin:
     """
     def query_companies(self, include=None):
         return requests.get('{}/api/v2/companies'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Change configuration settings for this account
@@ -1179,15 +1276,18 @@ class Mixin:
     """
     def set_company_configuration(self, id_, model):
         return requests.post('{}/api/v2/companies/{}/configuration'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single company
     
     Replace the existing company object at this URL with an updated object.
-      A 'company' represents a single corporation or individual that is registered to handle transactional taxes.
+      A `CompanyModel` represents a single corporation or individual that is registered to handle transactional taxes.
       All data from the existing object will be replaced with data in the object you PUT.
-      To set a field's value to null, you may either set its value to null or omit that field from the object you post.
+      When calling `UpdateCompany`, you are permitted to update the company itself. Updates to the nested objects
+      such as contacts, locations, or settings are not permitted. To update the nested objects
+      To set a field's value to `null`, you may either set its value to `null` or omit that field from the object you PUT.
     
       :param id_ [int] The ID of the company you wish to update.
       :param model [CompanyModel] The company object you wish to update.
@@ -1195,7 +1295,8 @@ class Mixin:
     """
     def update_company(self, id_, model):
         return requests.put('{}/api/v2/companies/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new contact
@@ -1210,7 +1311,8 @@ class Mixin:
     """
     def create_contacts(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/contacts'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single contact
@@ -1223,7 +1325,8 @@ class Mixin:
     """
     def delete_contact(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/contacts/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single contact
@@ -1238,7 +1341,8 @@ class Mixin:
     """
     def get_contact(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/contacts/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve contacts for this company
@@ -1257,7 +1361,8 @@ class Mixin:
     """
     def list_contacts_by_company(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/contacts'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all contacts
@@ -1277,7 +1382,8 @@ class Mixin:
     """
     def query_contacts(self, include=None):
         return requests.get('{}/api/v2/contacts'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single contact
@@ -1295,7 +1401,8 @@ class Mixin:
     """
     def update_contact(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/contacts/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create customers for this company
@@ -1319,7 +1426,8 @@ class Mixin:
     """
     def create_customers(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/customers'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a customer record
@@ -1341,7 +1449,8 @@ class Mixin:
     """
     def delete_customer(self, companyId, customerCode):
         return requests.delete('{}/api/v2/companies/{}/customers/{}'.format(self.base_url, companyId, customerCode),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single customer
@@ -1367,7 +1476,8 @@ class Mixin:
     """
     def get_customer(self, companyId, customerCode, include=None):
         return requests.get('{}/api/v2/companies/{}/customers/{}'.format(self.base_url, companyId, customerCode),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Link certificates to a customer
@@ -1390,7 +1500,8 @@ class Mixin:
     """
     def link_certificates_to_customer(self, companyId, customerCode, model):
         return requests.post('{}/api/v2/companies/{}/customers/{}/certificates/link'.format(self.base_url, companyId, customerCode),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List certificates linked to a customer
@@ -1417,7 +1528,8 @@ class Mixin:
     """
     def list_certificates_for_customer(self, companyId, customerCode, include=None):
         return requests.get('{}/api/v2/companies/{}/customers/{}/certificates'.format(self.base_url, companyId, customerCode),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List active certificates for a location
@@ -1443,7 +1555,8 @@ class Mixin:
     """
     def list_valid_certificates_for_customer(self, companyId, customerCode, country, region):
         return requests.get('{}/api/v2/companies/{}/customers/{}/certificates/{}/{}'.format(self.base_url, companyId, customerCode, country, region),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all customers for this company
@@ -1471,7 +1584,8 @@ class Mixin:
     """
     def query_customers(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/customers'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Unlink certificates from a customer
@@ -1494,7 +1608,8 @@ class Mixin:
     """
     def unlink_certificates_from_customer(self, companyId, customerCode, model):
         return requests.post('{}/api/v2/companies/{}/customers/{}/certificates/unlink'.format(self.base_url, companyId, customerCode),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single customer
@@ -1517,7 +1632,8 @@ class Mixin:
     """
     def update_customer(self, companyId, customerCode, model):
         return requests.put('{}/api/v2/companies/{}/customers/{}'.format(self.base_url, companyId, customerCode),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Lists all parents of an HS Code.
@@ -1536,7 +1652,8 @@ class Mixin:
     """
     def get_cross_border_code(self, country, hsCode):
         return requests.get('{}/api/v2/definitions/crossborder/{}/{}/hierarchy'.format(self.base_url, country, hsCode),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Test whether a form supports online login verification
@@ -1553,7 +1670,8 @@ class Mixin:
     """
     def get_login_verifier_by_form(self, form, include=None):
         return requests.get('{}/api/v2/definitions/filingcalendars/loginverifiers/{}'.format(self.base_url, form),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of the AvaFile Forms available
@@ -1571,7 +1689,8 @@ class Mixin:
     """
     def list_ava_file_forms(self, include=None):
         return requests.get('{}/api/v2/definitions/avafileforms'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List certificate attributes used by a company
@@ -1590,7 +1709,8 @@ class Mixin:
     """
     def list_certificate_attributes(self, include=None):
         return requests.get('{}/api/v2/definitions/certificateattributes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List the certificate exempt reasons defined by a company
@@ -1609,7 +1729,8 @@ class Mixin:
     """
     def list_certificate_exempt_reasons(self, include=None):
         return requests.get('{}/api/v2/definitions/certificateexemptreasons'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List certificate exposure zones used by a company
@@ -1628,7 +1749,8 @@ class Mixin:
     """
     def list_certificate_exposure_zones(self, include=None):
         return requests.get('{}/api/v2/definitions/certificateexposurezones'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of communications service types
@@ -1644,7 +1766,8 @@ class Mixin:
     """
     def list_communications_service_types(self, id_, include=None):
         return requests.get('{}/api/v2/definitions/communications/transactiontypes/{}/servicetypes'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of communications transactiontypes
@@ -1660,7 +1783,8 @@ class Mixin:
     """
     def list_communications_transaction_types(self, include=None):
         return requests.get('{}/api/v2/definitions/communications/transactiontypes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of communications transaction/service type pairs
@@ -1676,7 +1800,8 @@ class Mixin:
     """
     def list_communications_t_s_pairs(self, include=None):
         return requests.get('{}/api/v2/definitions/communications/tspairs'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all ISO 3166 countries
@@ -1693,7 +1818,8 @@ class Mixin:
     """
     def list_countries(self, include=None):
         return requests.get('{}/api/v2/definitions/countries'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List certificate exposure zones used by a company
@@ -1713,7 +1839,8 @@ class Mixin:
     """
     def list_cover_letters(self, include=None):
         return requests.get('{}/api/v2/definitions/coverletters'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Lists the next level of HS Codes given a destination country and HS Code prefix.
@@ -1735,7 +1862,8 @@ class Mixin:
     """
     def list_cross_border_codes(self, country, hsCode, include=None):
         return requests.get('{}/api/v2/definitions/crossborder/{}/{}'.format(self.base_url, country, hsCode),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List top level HS Code Sections.
@@ -1750,7 +1878,8 @@ class Mixin:
     """
     def list_cross_border_sections(self):
         return requests.get('{}/api/v2/definitions/crossborder/sections'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all ISO 4217 currencies supported by AvaTax.
@@ -1767,7 +1896,8 @@ class Mixin:
     """
     def list_currencies(self, include=None):
         return requests.get('{}/api/v2/definitions/currencies'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported entity use codes
@@ -1786,7 +1916,8 @@ class Mixin:
     """
     def list_entity_use_codes(self, include=None):
         return requests.get('{}/api/v2/definitions/entityusecodes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported filing frequencies.
@@ -1802,7 +1933,8 @@ class Mixin:
     """
     def list_filing_frequencies(self, include=None):
         return requests.get('{}/api/v2/definitions/filingfrequencies'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List jurisdictions based on the filter provided
@@ -1819,7 +1951,8 @@ class Mixin:
     """
     def list_jurisdictions(self, include=None):
         return requests.get('{}/api/v2/definitions/jurisdictions'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List jurisdictions near a specific address
@@ -1845,7 +1978,8 @@ class Mixin:
     """
     def list_jurisdictions_by_address(self, include=None):
         return requests.get('{}/api/v2/definitions/jurisdictionsnearaddress'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the list of questions that are required for a tax location
@@ -1874,7 +2008,8 @@ class Mixin:
     """
     def list_location_questions_by_address(self, include=None):
         return requests.get('{}/api/v2/definitions/locationquestions'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all forms where logins can be verified automatically
@@ -1891,7 +2026,8 @@ class Mixin:
     """
     def list_login_verifiers(self, include=None):
         return requests.get('{}/api/v2/definitions/filingcalendars/loginverifiers'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported nexus for all countries and regions.
@@ -1907,7 +2043,8 @@ class Mixin:
     """
     def list_nexus(self, include=None):
         return requests.get('{}/api/v2/definitions/nexus'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all nexus that apply to a specific address.
@@ -1933,7 +2070,8 @@ class Mixin:
     """
     def list_nexus_by_address(self, include=None):
         return requests.get('{}/api/v2/definitions/nexus/byaddress'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported nexus for a country.
@@ -1950,7 +2088,8 @@ class Mixin:
     """
     def list_nexus_by_country(self, country, include=None):
         return requests.get('{}/api/v2/definitions/nexus/{}'.format(self.base_url, country),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported nexus for a country and region.
@@ -1968,7 +2107,8 @@ class Mixin:
     """
     def list_nexus_by_country_and_region(self, country, region, include=None):
         return requests.get('{}/api/v2/definitions/nexus/{}/{}'.format(self.base_url, country, region),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List nexus related to a tax form
@@ -1991,7 +2131,8 @@ class Mixin:
     """
     def list_nexus_by_form_code(self, formCode, include=None):
         return requests.get('{}/api/v2/definitions/nexus/byform/{}'.format(self.base_url, formCode),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of nexus tax type groups
@@ -2007,7 +2148,8 @@ class Mixin:
     """
     def list_nexus_tax_type_groups(self, include=None):
         return requests.get('{}/api/v2/definitions/nexustaxtypegroups'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax notice customer funding options.
@@ -2023,7 +2165,8 @@ class Mixin:
     """
     def list_notice_customer_funding_options(self, include=None):
         return requests.get('{}/api/v2/definitions/noticecustomerfundingoptions'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax notice customer types.
@@ -2039,7 +2182,8 @@ class Mixin:
     """
     def list_notice_customer_types(self, include=None):
         return requests.get('{}/api/v2/definitions/noticecustomertypes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax notice filing types.
@@ -2055,7 +2199,8 @@ class Mixin:
     """
     def list_notice_filingtypes(self, include=None):
         return requests.get('{}/api/v2/definitions/noticefilingtypes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax notice priorities.
@@ -2071,7 +2216,8 @@ class Mixin:
     """
     def list_notice_priorities(self, include=None):
         return requests.get('{}/api/v2/definitions/noticepriorities'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax notice reasons.
@@ -2087,7 +2233,8 @@ class Mixin:
     """
     def list_notice_reasons(self, include=None):
         return requests.get('{}/api/v2/definitions/noticereasons'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax notice responsibility ids
@@ -2103,7 +2250,8 @@ class Mixin:
     """
     def list_notice_responsibilities(self, include=None):
         return requests.get('{}/api/v2/definitions/noticeresponsibilities'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax notice root causes
@@ -2119,7 +2267,8 @@ class Mixin:
     """
     def list_notice_root_causes(self, include=None):
         return requests.get('{}/api/v2/definitions/noticerootcauses'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax notice statuses.
@@ -2135,7 +2284,8 @@ class Mixin:
     """
     def list_notice_statuses(self, include=None):
         return requests.get('{}/api/v2/definitions/noticestatuses'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax notice types.
@@ -2151,7 +2301,8 @@ class Mixin:
     """
     def list_notice_types(self, include=None):
         return requests.get('{}/api/v2/definitions/noticetypes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported extra parameters for creating transactions.
@@ -2168,7 +2319,8 @@ class Mixin:
     """
     def list_parameters(self, include=None):
         return requests.get('{}/api/v2/definitions/parameters'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported permissions
@@ -2176,15 +2328,14 @@ class Mixin:
     Returns the full list of Avalara-supported permission types.
       This API is intended to be useful to identify the capabilities of a particular user logon.
     
-      :param filter [string] A filter statement to identify specific records to retrieve. For more information on filtering, see [Filtering in REST](http://developer.avalara.com/avatax/filtering-in-rest/) .
       :param top [int] If nonzero, return no more than this number of results. Used with $skip to provide pagination for large datasets.
       :param skip [int] If nonzero, skip this number of results before returning data. Used with $top to provide pagination for large datasets.
-      :param orderBy [string] A comma separated list of sort statements in the format `(fieldname) [ASC|DESC]`, for example `id ASC`.
       :return FetchResult
     """
     def list_permissions(self, include=None):
         return requests.get('{}/api/v2/definitions/permissions'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported postal codes.
@@ -2199,7 +2350,8 @@ class Mixin:
     """
     def list_postal_codes(self, include=None):
         return requests.get('{}/api/v2/definitions/postalcodes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all customs duty programs recognized by AvaTax
@@ -2220,7 +2372,8 @@ class Mixin:
     """
     def list_preferred_programs(self, include=None):
         return requests.get('{}/api/v2/definitions/preferredprograms'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of rate types for each country
@@ -2237,7 +2390,8 @@ class Mixin:
     """
     def list_rate_types_by_country(self, country, include=None):
         return requests.get('{}/api/v2/definitions/countries/{}/ratetypes'.format(self.base_url, country),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all ISO 3166 regions
@@ -2254,7 +2408,8 @@ class Mixin:
     """
     def list_regions(self, include=None):
         return requests.get('{}/api/v2/definitions/regions'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all ISO 3166 regions for a country
@@ -2272,7 +2427,8 @@ class Mixin:
     """
     def list_regions_by_country(self, country, include=None):
         return requests.get('{}/api/v2/definitions/countries/{}/regions'.format(self.base_url, country),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported resource file types
@@ -2288,7 +2444,8 @@ class Mixin:
     """
     def list_resource_file_types(self, include=None):
         return requests.get('{}/api/v2/definitions/resourcefiletypes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported permissions
@@ -2305,7 +2462,8 @@ class Mixin:
     """
     def list_security_roles(self, include=None):
         return requests.get('{}/api/v2/definitions/securityroles'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported subscription types
@@ -2323,7 +2481,8 @@ class Mixin:
     """
     def list_subscription_types(self, include=None):
         return requests.get('{}/api/v2/definitions/subscriptiontypes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax authorities.
@@ -2339,7 +2498,8 @@ class Mixin:
     """
     def list_tax_authorities(self, include=None):
         return requests.get('{}/api/v2/definitions/taxauthorities'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported forms for each tax authority.
@@ -2357,7 +2517,8 @@ class Mixin:
     """
     def list_tax_authority_forms(self, include=None):
         return requests.get('{}/api/v2/definitions/taxauthorityforms'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax authority types.
@@ -2373,7 +2534,8 @@ class Mixin:
     """
     def list_tax_authority_types(self, include=None):
         return requests.get('{}/api/v2/definitions/taxauthoritytypes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax codes.
@@ -2392,7 +2554,8 @@ class Mixin:
     """
     def list_tax_codes(self, include=None):
         return requests.get('{}/api/v2/definitions/taxcodes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of Avalara-supported tax code types.
@@ -2401,15 +2564,14 @@ class Mixin:
       A 'Tax Code Type' represents a broad category of tax codes, and is less detailed than a single TaxCode.
       This API is intended to be useful for broadly searching for tax codes by tax code type.
     
-      :param filter [string] A filter statement to identify specific records to retrieve. For more information on filtering, see [Filtering in REST](http://developer.avalara.com/avatax/filtering-in-rest/) .
       :param top [int] If nonzero, return no more than this number of results. Used with $skip to provide pagination for large datasets.
       :param skip [int] If nonzero, skip this number of results before returning data. Used with $top to provide pagination for large datasets.
-      :param orderBy [string] A comma separated list of sort statements in the format `(fieldname) [ASC|DESC]`, for example `id ASC`.
       :return TaxCodeTypesModel
     """
     def list_tax_code_types(self, include=None):
         return requests.get('{}/api/v2/definitions/taxcodetypes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of the Tax Forms available
@@ -2425,7 +2587,8 @@ class Mixin:
     """
     def list_tax_forms(self, include=None):
         return requests.get('{}/api/v2/definitions/taxforms'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of tax sub types
@@ -2441,7 +2604,8 @@ class Mixin:
     """
     def list_tax_sub_types(self, include=None):
         return requests.get('{}/api/v2/definitions/taxsubtypes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve the full list of tax type groups
@@ -2457,7 +2621,8 @@ class Mixin:
     """
     def list_tax_type_groups(self, include=None):
         return requests.get('{}/api/v2/definitions/taxtypegroups'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all defined units of measurement
@@ -2473,7 +2638,8 @@ class Mixin:
     """
     def list_unit_of_measurement(self, include=None):
         return requests.get('{}/api/v2/definitions/unitofmeasurements'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create one or more DistanceThreshold objects
@@ -2489,7 +2655,8 @@ class Mixin:
     """
     def create_distance_threshold(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/distancethresholds'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single DistanceThreshold object
@@ -2505,7 +2672,8 @@ class Mixin:
     """
     def delete_distance_threshold(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/distancethresholds/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single DistanceThreshold
@@ -2521,7 +2689,8 @@ class Mixin:
     """
     def get_distance_threshold(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/distancethresholds/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all DistanceThresholds for this company.
@@ -2541,7 +2710,8 @@ class Mixin:
     """
     def list_distance_thresholds(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/distancethresholds'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all DistanceThreshold objects
@@ -2562,7 +2732,8 @@ class Mixin:
     """
     def query_distance_thresholds(self, include=None):
         return requests.get('{}/api/v2/distancethresholds'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a DistanceThreshold object
@@ -2581,7 +2752,8 @@ class Mixin:
     """
     def update_distance_threshold(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/distancethresholds/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Approve existing Filing Request
@@ -2597,7 +2769,8 @@ class Mixin:
     """
     def approve_filing_request(self, companyId, id_):
         return requests.post('{}/api/v2/companies/{}/filingrequests/{}/approve'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Cancel existing Filing Request
@@ -2612,7 +2785,8 @@ class Mixin:
     """
     def cancel_filing_request(self, companyId, id_):
         return requests.post('{}/api/v2/companies/{}/filingrequests/{}/cancel'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new filing request to cancel a filing calendar
@@ -2628,7 +2802,8 @@ class Mixin:
     """
     def cancel_filing_requests(self, companyId, id_, model):
         return requests.post('{}/api/v2/companies/{}/filingcalendars/{}/cancel/request'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a filing calendar
@@ -2642,7 +2817,8 @@ class Mixin:
     """
     def create_filing_calendars(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/filingcalendars'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new filing request to create a filing calendar
@@ -2657,7 +2833,8 @@ class Mixin:
     """
     def create_filing_requests(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/filingcalendars/add/request'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Returns a list of options for adding the specified form.
@@ -2670,7 +2847,8 @@ class Mixin:
     """
     def cycle_safe_add(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/filingcalendars/add/options'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Indicates when changes are allowed to be made to a filing calendar.
@@ -2684,7 +2862,8 @@ class Mixin:
     """
     def cycle_safe_edit(self, companyId, id_, model):
         return requests.post('{}/api/v2/companies/{}/filingcalendars/{}/edit/options'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Returns a list of options for expiring a filing calendar
@@ -2697,7 +2876,8 @@ class Mixin:
     """
     def cycle_safe_expiration(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/filingcalendars/{}/cancel/options'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single filing calendar.
@@ -2713,7 +2893,8 @@ class Mixin:
     """
     def delete_filing_calendar(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/filingcalendars/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single filing calendar
@@ -2726,7 +2907,8 @@ class Mixin:
     """
     def get_filing_calendar(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/filingcalendars/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single filing request
@@ -2741,7 +2923,8 @@ class Mixin:
     """
     def get_filing_request(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/filingrequests/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all filing calendars for this company
@@ -2759,7 +2942,8 @@ class Mixin:
     """
     def list_filing_calendars(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/filingcalendars'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all filing requests for this company
@@ -2769,6 +2953,7 @@ class Mixin:
       are reviewed and validated by Avalara Compliance before being implemented.
     
       :param companyId [int] The ID of the company that owns these batches
+      :param filingCalendarId [int] Specific filing calendar id for the request
       :param filter [string] A filter statement to identify specific records to retrieve. For more information on filtering, see [Filtering in REST](http://developer.avalara.com/avatax/filtering-in-rest/) .
       :param top [int] If nonzero, return no more than this number of results. Used with $skip to provide pagination for large datasets.
       :param skip [int] If nonzero, skip this number of results before returning data. Used with $top to provide pagination for large datasets.
@@ -2777,7 +2962,8 @@ class Mixin:
     """
     def list_filing_requests(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/filingrequests'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     New request for getting for validating customer's login credentials
@@ -2790,7 +2976,8 @@ class Mixin:
     """
     def login_verification_request(self, model):
         return requests.post('{}/api/v2/filingcalendars/credentials/verify'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Gets the request status and Login Result
@@ -2804,7 +2991,8 @@ class Mixin:
     """
     def login_verification_status(self, jobId):
         return requests.get('{}/api/v2/filingcalendars/credentials/{}'.format(self.base_url, jobId),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all filing calendars
@@ -2821,7 +3009,8 @@ class Mixin:
     """
     def query_filing_calendars(self, include=None):
         return requests.get('{}/api/v2/filingcalendars'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all filing requests
@@ -2832,6 +3021,7 @@ class Mixin:
       Search for specific objects using the criteria in the `$filter` parameter; full documentation is available on [Filtering in REST](http://developer.avalara.com/avatax/filtering-in-rest/) .
       Paginate your results using the `$top`, `$skip`, and `$orderby` parameters.
     
+      :param filingCalendarId [int] Specific filing calendar id for the request
       :param filter [string] A filter statement to identify specific records to retrieve. For more information on filtering, see [Filtering in REST](http://developer.avalara.com/avatax/filtering-in-rest/) .
       :param top [int] If nonzero, return no more than this number of results. Used with $skip to provide pagination for large datasets.
       :param skip [int] If nonzero, skip this number of results before returning data. Used with $top to provide pagination for large datasets.
@@ -2840,7 +3030,8 @@ class Mixin:
     """
     def query_filing_requests(self, include=None):
         return requests.get('{}/api/v2/filingrequests'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new filing request to edit a filing calendar
@@ -2858,7 +3049,8 @@ class Mixin:
     """
     def request_filing_calendar_update(self, companyId, id_, model):
         return requests.post('{}/api/v2/companies/{}/filingcalendars/{}/edit/request'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Edit existing Filing Calendar
@@ -2872,7 +3064,8 @@ class Mixin:
     """
     def update_filing_calendar(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/filingcalendars/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Edit existing Filing Request
@@ -2888,7 +3081,8 @@ class Mixin:
     """
     def update_filing_request(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/filingrequests/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Approve all filings for the specified company in the given filing period.
@@ -2909,7 +3103,8 @@ class Mixin:
     """
     def approve_filings(self, companyId, year, month, model):
         return requests.post('{}/api/v2/companies/{}/filings/{}/{}/approve'.format(self.base_url, companyId, year, month),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Approve all filings for the specified company in the given filing period and country.
@@ -2931,7 +3126,8 @@ class Mixin:
     """
     def approve_filings_country(self, companyId, year, month, country, model):
         return requests.post('{}/api/v2/companies/{}/filings/{}/{}/{}/approve'.format(self.base_url, companyId, year, month, country),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Approve all filings for the specified company in the given filing period, country and region.
@@ -2954,7 +3150,8 @@ class Mixin:
     """
     def approve_filings_country_region(self, companyId, year, month, country, region, model):
         return requests.post('{}/api/v2/companies/{}/filings/{}/{}/{}/{}/approve'.format(self.base_url, companyId, year, month, country, region),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Add an adjustment to a given filing.
@@ -2977,7 +3174,8 @@ class Mixin:
     """
     def create_return_adjustment(self, companyId, year, month, country, region, formCode, model):
         return requests.post('{}/api/v2/companies/{}/filings/{}/{}/{}/{}/{}/adjust'.format(self.base_url, companyId, year, month, country, region, formCode),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Add an augmentation for a given filing.
@@ -2999,7 +3197,8 @@ class Mixin:
     """
     def create_return_augmentation(self, companyId, year, month, country, region, formCode, model):
         return requests.post('{}/api/v2/companies/{}/filings/{}/{}/{}/{}/{}/augment'.format(self.base_url, companyId, year, month, country, region, formCode),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Add an payment to a given filing.
@@ -3022,7 +3221,8 @@ class Mixin:
     """
     def create_return_payment(self, companyId, year, month, country, region, formCode, model):
         return requests.post('{}/api/v2/companies/{}/filings/{}/{}/{}/{}/{}/payment'.format(self.base_url, companyId, year, month, country, region, formCode),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete an adjustment for a given filing.
@@ -3040,7 +3240,8 @@ class Mixin:
     """
     def delete_return_adjustment(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/filings/adjust/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete an augmentation for a given filing.
@@ -3057,7 +3258,8 @@ class Mixin:
     """
     def delete_return_augmentation(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/filings/augment/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete an payment for a given filing.
@@ -3075,7 +3277,8 @@ class Mixin:
     """
     def delete_return_payment(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/filings/payment/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve worksheet checkup report for company and filing period.
@@ -3088,7 +3291,8 @@ class Mixin:
     """
     def filings_checkup_report(self, filingsId, companyId):
         return requests.get('{}/api/v2/companies/{}/filings/{}/checkup'.format(self.base_url, filingsId, companyId),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve worksheet checkup report for company and filing period.
@@ -3102,7 +3306,8 @@ class Mixin:
     """
     def filings_checkup_reports(self, companyId, year, month):
         return requests.get('{}/api/v2/companies/{}/filings/{}/{}/checkup'.format(self.base_url, companyId, year, month),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single attachment for a filing
@@ -3116,7 +3321,8 @@ class Mixin:
     """
     def get_filing_attachment(self, companyId, filingReturnId, include=None):
         return requests.get('{}/api/v2/companies/{}/filings/{}/attachment'.format(self.base_url, companyId, filingReturnId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a list of filings for the specified company in the year and month of a given filing period.
@@ -3132,7 +3338,8 @@ class Mixin:
     """
     def get_filing_attachments(self, companyId, year, month):
         return requests.get('{}/api/v2/companies/{}/filings/{}/{}/attachments'.format(self.base_url, companyId, year, month),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single trace file for a company filing period
@@ -3148,7 +3355,8 @@ class Mixin:
     """
     def get_filing_attachments_trace_file(self, companyId, year, month):
         return requests.get('{}/api/v2/companies/{}/filings/{}/{}/attachments/tracefile'.format(self.base_url, companyId, year, month),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a filing for the specified company and id.
@@ -3163,7 +3371,8 @@ class Mixin:
     """
     def get_filing_return(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/filings/returns/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a list of filings for the specified company in the year and month of a given filing period.
@@ -3179,7 +3388,8 @@ class Mixin:
     """
     def get_filings(self, companyId, year, month):
         return requests.get('{}/api/v2/companies/{}/filings/{}/{}'.format(self.base_url, companyId, year, month),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a list of filings for the specified company in the given filing period and country.
@@ -3196,7 +3406,8 @@ class Mixin:
     """
     def get_filings_by_country(self, companyId, year, month, country):
         return requests.get('{}/api/v2/companies/{}/filings/{}/{}/{}'.format(self.base_url, companyId, year, month, country),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a list of filings for the specified company in the filing period, country and region.
@@ -3214,7 +3425,8 @@ class Mixin:
     """
     def get_filings_by_country_region(self, companyId, year, month, country, region):
         return requests.get('{}/api/v2/companies/{}/filings/{}/{}/{}/{}'.format(self.base_url, companyId, year, month, country, region),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a list of filings for the specified company in the given filing period, country, region and form.
@@ -3233,7 +3445,8 @@ class Mixin:
     """
     def get_filings_by_return_name(self, companyId, year, month, country, region, formCode):
         return requests.get('{}/api/v2/companies/{}/filings/{}/{}/{}/{}/{}'.format(self.base_url, companyId, year, month, country, region, formCode),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a list of filings for the specified company in the year and month of a given filing period.
@@ -3253,7 +3466,8 @@ class Mixin:
     """
     def get_filings_returns(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/filings/returns'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Rebuild a set of filings for the specified company in the given filing period.
@@ -3273,7 +3487,8 @@ class Mixin:
     """
     def rebuild_filings(self, companyId, year, month, model):
         return requests.post('{}/api/v2/companies/{}/filings/{}/{}/rebuild'.format(self.base_url, companyId, year, month),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Rebuild a set of filings for the specified company in the given filing period and country.
@@ -3294,7 +3509,8 @@ class Mixin:
     """
     def rebuild_filings_by_country(self, companyId, year, month, country, model):
         return requests.post('{}/api/v2/companies/{}/filings/{}/{}/{}/rebuild'.format(self.base_url, companyId, year, month, country),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Rebuild a set of filings for the specified company in the given filing period, country and region.
@@ -3316,7 +3532,8 @@ class Mixin:
     """
     def rebuild_filings_by_country_region(self, companyId, year, month, country, region, model):
         return requests.post('{}/api/v2/companies/{}/filings/{}/{}/{}/{}/rebuild'.format(self.base_url, companyId, year, month, country, region),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Edit an adjustment for a given filing.
@@ -3335,7 +3552,8 @@ class Mixin:
     """
     def update_return_adjustment(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/filings/adjust/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Edit an augmentation for a given filing.
@@ -3353,7 +3571,8 @@ class Mixin:
     """
     def update_return_augmentation(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/filings/augment/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Edit an payment for a given filing.
@@ -3372,27 +3591,27 @@ class Mixin:
     """
     def update_return_payment(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/filings/payment/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     FREE API - Request a free trial of AvaTax
     
-    Call this API to obtain a free AvaTax sandbox account.
-      This API is free to use. No authentication credentials are required to call this API. You must read and accept Avalara's terms and conditions.
-      The account will grant a full trial version of AvaTax (e.g. AvaTaxPro) for a limited period of time.
-      After this introductory period, you may continue to use the free TaxRates API.
-      Limitations on free trial accounts:
-      * Only one free trial per company.
-      * The free trial account does not expire.
-      * Includes a limited time free trial of AvaTaxPro; after that date, the free TaxRates API will continue to work.
-      * Each free trial account must have its own valid email address.
+    Call this API to obtain a free AvaTax account.
+      This API is free to use. No authentication credentials are required to call this API. You must read and
+      accept [Avalara's terms and conditions](https://www1.avalara.com/us/en/legal/terms.html) for the account to be
+      created.
+      If all conditions are met, this API will grant a free trial version of AvaTax. For a list of functionality
+      available in the free trial and its limitations, please see the [AvaTax Developer Website Free Trial page](https://developer.avalara.com/avatax/signup/).
+      After your free trial concludes, you will still be able to use the [Free AvaTax API Suite](https://developer.avalara.com/api-reference/avatax/rest/v2/methods/Free/).
     
       :param model [FreeTrialRequestModel] Required information to provision a free trial account.
       :return NewAccountModel
     """
     def request_free_trial(self, model):
         return requests.post('{}/api/v2/accounts/freetrials/request'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     FREE API - Sales tax rates for a specified address
@@ -3428,7 +3647,8 @@ class Mixin:
     """
     def tax_rates_by_address(self, include=None):
         return requests.get('{}/api/v2/taxrates/byaddress'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     FREE API - Sales tax rates for a specified country and postal code. This API is only available for US postal codes.
@@ -3460,7 +3680,8 @@ class Mixin:
     """
     def tax_rates_by_postal_code(self, include=None):
         return requests.get('{}/api/v2/taxrates/bypostalcode'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Request the javascript for a funding setup widget
@@ -3483,7 +3704,8 @@ class Mixin:
     """
     def activate_funding_request(self, id_):
         return requests.get('{}/api/v2/fundingrequests/{}/widget'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve status about a funding setup request
@@ -3504,7 +3726,8 @@ class Mixin:
     """
     def funding_request_status(self, id_):
         return requests.get('{}/api/v2/fundingrequests/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new item
@@ -3522,7 +3745,8 @@ class Mixin:
     """
     def create_items(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/items'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single item
@@ -3540,7 +3764,8 @@ class Mixin:
     """
     def delete_item(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/items/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single item
@@ -3558,7 +3783,8 @@ class Mixin:
     """
     def get_item(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/items/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve items for this company
@@ -3584,7 +3810,8 @@ class Mixin:
     """
     def list_items_by_company(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/items'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all items
@@ -3609,7 +3836,8 @@ class Mixin:
     """
     def query_items(self, include=None):
         return requests.get('{}/api/v2/items'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single item
@@ -3630,7 +3858,8 @@ class Mixin:
     """
     def update_item(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/items/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create one or more overrides
@@ -3647,7 +3876,8 @@ class Mixin:
     """
     def create_jurisdiction_overrides(self, accountId, model):
         return requests.post('{}/api/v2/accounts/{}/jurisdictionoverrides'.format(self.base_url, accountId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single override
@@ -3660,7 +3890,8 @@ class Mixin:
     """
     def delete_jurisdiction_override(self, accountId, id_):
         return requests.delete('{}/api/v2/accounts/{}/jurisdictionoverrides/{}'.format(self.base_url, accountId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single override
@@ -3677,7 +3908,8 @@ class Mixin:
     """
     def get_jurisdiction_override(self, accountId, id_):
         return requests.get('{}/api/v2/accounts/{}/jurisdictionoverrides/{}'.format(self.base_url, accountId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve overrides for this account
@@ -3700,7 +3932,8 @@ class Mixin:
     """
     def list_jurisdiction_overrides_by_account(self, accountId, include=None):
         return requests.get('{}/api/v2/accounts/{}/jurisdictionoverrides'.format(self.base_url, accountId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all overrides
@@ -3722,7 +3955,8 @@ class Mixin:
     """
     def query_jurisdiction_overrides(self, include=None):
         return requests.get('{}/api/v2/jurisdictionoverrides'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single jurisdictionoverride
@@ -3736,7 +3970,8 @@ class Mixin:
     """
     def update_jurisdiction_override(self, accountId, id_, model):
         return requests.put('{}/api/v2/accounts/{}/jurisdictionoverrides/{}'.format(self.base_url, accountId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new location
@@ -3749,7 +3984,8 @@ class Mixin:
     """
     def create_locations(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/locations'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single location
@@ -3762,7 +3998,8 @@ class Mixin:
     """
     def delete_location(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/locations/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single location
@@ -3782,7 +4019,8 @@ class Mixin:
     """
     def get_location(self, companyId, id_, include=None):
         return requests.get('{}/api/v2/companies/{}/locations/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve locations for this company
@@ -3807,7 +4045,8 @@ class Mixin:
     """
     def list_locations_by_company(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/locations'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all locations
@@ -3831,7 +4070,8 @@ class Mixin:
     """
     def query_locations(self, include=None):
         return requests.get('{}/api/v2/locations'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single location
@@ -3847,7 +4087,8 @@ class Mixin:
     """
     def update_location(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/locations/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Validate the location against local requirements
@@ -3862,7 +4103,8 @@ class Mixin:
     """
     def validate_location(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/locations/{}/validate'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Adjust a MultiDocument transaction
@@ -3882,7 +4124,8 @@ class Mixin:
     """
     def adjust_multi_document_transaction(self, code, type, model, include=None):
         return requests.post('{}/api/v2/transactions/multidocument/{}/type/{}/adjust'.format(self.base_url, code, type),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Get audit information about a MultiDocument transaction
@@ -3905,7 +4148,8 @@ class Mixin:
     """
     def audit_multi_document_transaction(self, code, type):
         return requests.get('{}/api/v2/transactions/multidocument/{}/type/{}/audit'.format(self.base_url, code, type),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Commit a MultiDocument transaction
@@ -3921,7 +4165,8 @@ class Mixin:
     """
     def commit_multi_document_transaction(self, model):
         return requests.post('{}/api/v2/transactions/multidocument/commit'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new MultiDocument transaction
@@ -3957,7 +4202,8 @@ class Mixin:
     """
     def create_multi_document_transaction(self, model, include=None):
         return requests.post('{}/api/v2/transactions/multidocument'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a MultiDocument transaction
@@ -3979,7 +4225,8 @@ class Mixin:
     """
     def get_multi_document_transaction_by_code_and_type(self, code, type, include=None):
         return requests.get('{}/api/v2/transactions/multidocument/{}/type/{}'.format(self.base_url, code, type),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a MultiDocument transaction by ID
@@ -4007,7 +4254,8 @@ class Mixin:
     """
     def get_multi_document_transaction_by_id(self, id_, include=None):
         return requests.get('{}/api/v2/transactions/multidocument/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all MultiDocument transactions
@@ -4036,7 +4284,8 @@ class Mixin:
     """
     def list_multi_document_transactions(self, include=None):
         return requests.get('{}/api/v2/transactions/multidocument'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a refund for a MultiDocument transaction
@@ -4077,7 +4326,8 @@ class Mixin:
     """
     def refund_multi_document_transaction(self, code, type, model, include=None):
         return requests.post('{}/api/v2/transactions/multidocument/{}/type/{}/refund'.format(self.base_url, code, type),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Verify a MultiDocument transaction
@@ -4092,7 +4342,8 @@ class Mixin:
     """
     def verify_multi_document_transaction(self, model):
         return requests.post('{}/api/v2/transactions/multidocument/verify'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Void a MultiDocument transaction
@@ -4111,7 +4362,8 @@ class Mixin:
     """
     def void_multi_document_transaction(self, code, type, model):
         return requests.post('{}/api/v2/transactions/multidocument/{}/type/{}/void'.format(self.base_url, code, type),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new nexus
@@ -4132,7 +4384,8 @@ class Mixin:
     """
     def create_nexus(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/nexus'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Creates nexus for a list of addresses.
@@ -4155,7 +4408,8 @@ class Mixin:
     """
     def declare_nexus_by_address(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/nexus/byaddress'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single nexus
@@ -4169,7 +4423,8 @@ class Mixin:
     """
     def delete_nexus(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/nexus/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single nexus
@@ -4186,7 +4441,8 @@ class Mixin:
     """
     def get_nexus(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/nexus/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List company nexus related to a tax form
@@ -4206,7 +4462,8 @@ class Mixin:
     """
     def get_nexus_by_form_code(self, companyId, formCode):
         return requests.get('{}/api/v2/companies/{}/nexus/byform/{}'.format(self.base_url, companyId, formCode),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve nexus for this company
@@ -4229,7 +4486,8 @@ class Mixin:
     """
     def list_nexus_by_company(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/nexus'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all nexus
@@ -4251,7 +4509,8 @@ class Mixin:
     """
     def query_nexus(self, include=None):
         return requests.get('{}/api/v2/nexus'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single nexus
@@ -4275,7 +4534,26 @@ class Mixin:
     """
     def update_nexus(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/nexus/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
+
+    r"""
+    Delete a single notice.
+    
+    This API is available by invitation only.
+      'Notice comments' are updates by the notice team on the work to be done and that has been done so far on a notice.
+      A 'notice' represents a letter sent to a business by a tax authority regarding tax filing issues. Avalara
+      Returns customers often receive support and assistance from the Compliance Notices team in handling notices received by taxing authorities.
+    
+      :param companyId [int] The ID of the company that owns this notice.
+      :param id_ [int] The ID of the notice you wish to delete the finance detail from.
+      :param commentDetailsId [int] The ID of the comment you wish to delete.
+      :return ErrorDetail
+    """
+    def comment_details_delete(self, companyId, id_, commentDetailsId):
+        return requests.delete('{}/api/v2/companies/{}/notices/{}/commentdetails/{}'.format(self.base_url, companyId, id_, commentDetailsId),
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new notice comment.
@@ -4292,7 +4570,8 @@ class Mixin:
     """
     def create_notice_comment(self, companyId, id_, model):
         return requests.post('{}/api/v2/companies/{}/notices/{}/comments'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new notice finance details.
@@ -4310,7 +4589,8 @@ class Mixin:
     """
     def create_notice_finance_details(self, companyId, id_, model):
         return requests.post('{}/api/v2/companies/{}/notices/{}/financedetails'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new notice responsibility.
@@ -4327,7 +4607,8 @@ class Mixin:
     """
     def create_notice_responsibilities(self, companyId, id_, model):
         return requests.post('{}/api/v2/companies/{}/notices/{}/responsibilities'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new notice root cause.
@@ -4344,7 +4625,8 @@ class Mixin:
     """
     def create_notice_root_causes(self, companyId, id_, model):
         return requests.post('{}/api/v2/companies/{}/notices/{}/rootcauses'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new notice.
@@ -4360,7 +4642,8 @@ class Mixin:
     """
     def create_notices(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/notices'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single notice.
@@ -4376,7 +4659,8 @@ class Mixin:
     """
     def delete_notice(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/notices/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single responsibility
@@ -4393,7 +4677,8 @@ class Mixin:
     """
     def delete_responsibilities(self, companyId, noticeId, id_):
         return requests.delete('{}/api/v2/companies/{}/notices/{}/responsibilities/{}'.format(self.base_url, companyId, noticeId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single root cause.
@@ -4410,7 +4695,8 @@ class Mixin:
     """
     def delete_root_causes(self, companyId, noticeId, id_):
         return requests.delete('{}/api/v2/companies/{}/notices/{}/rootcauses/{}'.format(self.base_url, companyId, noticeId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single attachment
@@ -4424,7 +4710,27 @@ class Mixin:
     """
     def download_notice_attachment(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/notices/files/{}/attachment'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
+
+    r"""
+    Delete a single notice.
+    
+    This API is available by invitation only.
+      'Notice finance details' is the categorical breakdown of the total charge levied by the tax authority on our customer,
+      as broken down in our "notice log" found in Workflow. Main examples of the categories are 'Tax Due', 'Interest', 'Penalty', 'Total Abated'.
+      A 'notice' represents a letter sent to a business by a tax authority regarding tax filing issues. Avalara
+      Returns customers often receive support and assistance from the Compliance Notices team in handling notices received by taxing authorities.
+    
+      :param companyId [int] The ID of the company that owns this notice.
+      :param id_ [int] The ID of the notice you wish to delete the finance detail from.
+      :param financeDetailsId [int] The ID of the finance detail you wish to delete.
+      :return ErrorDetail
+    """
+    def financedetailsdelete(self, companyId, id_, financeDetailsId):
+        return requests.delete('{}/api/v2/companies/{}/notices/{}/financedetails/{}'.format(self.base_url, companyId, id_, financeDetailsId),
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single notice.
@@ -4440,7 +4746,8 @@ class Mixin:
     """
     def get_notice(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/notices/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve notice comments for a specific notice.
@@ -4456,7 +4763,8 @@ class Mixin:
     """
     def get_notice_comments(self, id_, companyId):
         return requests.get('{}/api/v2/companies/{}/notices/{}/comments'.format(self.base_url, id_, companyId),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve notice finance details for a specific notice.
@@ -4473,7 +4781,8 @@ class Mixin:
     """
     def get_notice_finance_details(self, id_, companyId):
         return requests.get('{}/api/v2/companies/{}/notices/{}/financedetails'.format(self.base_url, id_, companyId),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve notice responsibilities for a specific notice.
@@ -4489,7 +4798,8 @@ class Mixin:
     """
     def get_notice_responsibilities(self, id_, companyId):
         return requests.get('{}/api/v2/companies/{}/notices/{}/responsibilities'.format(self.base_url, id_, companyId),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve notice root causes for a specific notice.
@@ -4505,7 +4815,8 @@ class Mixin:
     """
     def get_notice_root_causes(self, id_, companyId):
         return requests.get('{}/api/v2/companies/{}/notices/{}/rootcauses'.format(self.base_url, id_, companyId),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve notices for a company.
@@ -4527,7 +4838,8 @@ class Mixin:
     """
     def list_notices_by_company(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/notices'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all notices.
@@ -4548,7 +4860,8 @@ class Mixin:
     """
     def query_notices(self, include=None):
         return requests.get('{}/api/v2/notices'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single notice.
@@ -4567,7 +4880,8 @@ class Mixin:
     """
     def update_notice(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/notices/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single attachment
@@ -4581,7 +4895,8 @@ class Mixin:
     """
     def upload_attachment(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/notices/files/attachment'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Request a new Avalara account
@@ -4603,7 +4918,8 @@ class Mixin:
     """
     def request_new_account(self, model):
         return requests.post('{}/api/v2/accounts/request'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Change Password
@@ -4619,7 +4935,8 @@ class Mixin:
     """
     def change_password(self, model):
         return requests.put('{}/api/v2/passwords'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new account
@@ -4634,7 +4951,8 @@ class Mixin:
     """
     def create_account(self, model):
         return requests.post('{}/api/v2/accounts'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new subscription
@@ -4651,7 +4969,8 @@ class Mixin:
     """
     def create_subscriptions(self, accountId, model):
         return requests.post('{}/api/v2/accounts/{}/subscriptions'.format(self.base_url, accountId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single account
@@ -4666,7 +4985,8 @@ class Mixin:
     """
     def delete_account(self, id_):
         return requests.delete('{}/api/v2/accounts/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single subscription
@@ -4681,7 +5001,8 @@ class Mixin:
     """
     def delete_subscription(self, accountId, id_):
         return requests.delete('{}/api/v2/accounts/{}/subscriptions/{}'.format(self.base_url, accountId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single user
@@ -4695,8 +5016,9 @@ class Mixin:
       :return ErrorDetail
     """
     def delete_user(self, id_, accountId):
-        return requests.delete('{}/api/v2/accounts/{}/users/{}'.format(self.base_url, id_, accountId),
-                               auth=self.auth, headers=self.client_header, params=None)
+        return requests.delete('{}/api/v2/accounts/{}/users/{}'.format(self.base_url, accountId, id_),
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all accounts
@@ -4720,7 +5042,8 @@ class Mixin:
     """
     def query_accounts(self, include=None):
         return requests.get('{}/api/v2/accounts'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Reset a user's password programmatically
@@ -4737,7 +5060,8 @@ class Mixin:
     """
     def reset_password(self, userId, model):
         return requests.post('{}/api/v2/passwords/{}/reset'.format(self.base_url, userId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single account
@@ -4752,7 +5076,8 @@ class Mixin:
     """
     def update_account(self, id_, model):
         return requests.put('{}/api/v2/accounts/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single subscription
@@ -4772,7 +5097,8 @@ class Mixin:
     """
     def update_subscription(self, accountId, id_, model):
         return requests.put('{}/api/v2/accounts/{}/subscriptions/{}'.format(self.base_url, accountId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Download a report
@@ -4793,7 +5119,8 @@ class Mixin:
     """
     def download_report(self, id_):
         return requests.get('{}/api/v2/reports/{}/attachment'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Intiate and download an ExportDocumentLine report
@@ -4811,7 +5138,8 @@ class Mixin:
     """
     def export_document_line(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/reports/exportdocumentline'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single report
@@ -4830,7 +5158,8 @@ class Mixin:
     """
     def get_report(self, id_):
         return requests.get('{}/api/v2/reports/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Initiate an ExportDocumentLine report task
@@ -4850,7 +5179,8 @@ class Mixin:
     """
     def initiate_export_document_line_report(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/reports/exportdocumentline/initiate'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all report tasks for account
@@ -4868,7 +5198,8 @@ class Mixin:
     """
     def list_reports(self):
         return requests.get('{}/api/v2/reports'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new setting
@@ -4888,7 +5219,8 @@ class Mixin:
     """
     def create_settings(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/settings'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single setting
@@ -4908,7 +5240,8 @@ class Mixin:
     """
     def delete_setting(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/settings/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single setting
@@ -4928,7 +5261,8 @@ class Mixin:
     """
     def get_setting(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/settings/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all settings for this company
@@ -4954,7 +5288,8 @@ class Mixin:
     """
     def list_settings_by_company(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/settings'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all settings
@@ -4979,7 +5314,8 @@ class Mixin:
     """
     def query_settings(self, include=None):
         return requests.get('{}/api/v2/settings'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single setting
@@ -5002,7 +5338,8 @@ class Mixin:
     """
     def update_setting(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/settings/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single subscription
@@ -5017,7 +5354,8 @@ class Mixin:
     """
     def get_subscription(self, accountId, id_):
         return requests.get('{}/api/v2/accounts/{}/subscriptions/{}'.format(self.base_url, accountId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve subscriptions for this account
@@ -5037,7 +5375,8 @@ class Mixin:
     """
     def list_subscriptions_by_account(self, accountId, include=None):
         return requests.get('{}/api/v2/accounts/{}/subscriptions'.format(self.base_url, accountId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all subscriptions
@@ -5056,7 +5395,8 @@ class Mixin:
     """
     def query_subscriptions(self, include=None):
         return requests.get('{}/api/v2/subscriptions'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new tax code
@@ -5073,7 +5413,8 @@ class Mixin:
     """
     def create_tax_codes(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/taxcodes'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single tax code
@@ -5086,7 +5427,8 @@ class Mixin:
     """
     def delete_tax_code(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/taxcodes/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single tax code
@@ -5103,7 +5445,8 @@ class Mixin:
     """
     def get_tax_code(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/taxcodes/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve tax codes for this company
@@ -5126,7 +5469,8 @@ class Mixin:
     """
     def list_tax_codes_by_company(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/taxcodes'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all tax codes
@@ -5148,7 +5492,8 @@ class Mixin:
     """
     def query_tax_codes(self, include=None):
         return requests.get('{}/api/v2/taxcodes'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single tax code
@@ -5168,7 +5513,8 @@ class Mixin:
     """
     def update_tax_code(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/taxcodes/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Build a multi-location tax content file
@@ -5187,7 +5533,8 @@ class Mixin:
     """
     def build_tax_content_file(self, model):
         return requests.post('{}/api/v2/pointofsaledata/build'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Build a tax content file for a single location
@@ -5211,7 +5558,8 @@ class Mixin:
     """
     def build_tax_content_file_for_location(self, companyId, id_, include=None):
         return requests.get('{}/api/v2/companies/{}/locations/{}/pointofsaledata'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Download a file listing tax rates by postal code
@@ -5228,6 +5576,21 @@ class Mixin:
       If you use this file to provide default tax rates, please ensure that your software calls `CreateTransaction`
       to reconcile the actual transaction and determine the difference between the estimated general tax
       rate and the final transaction tax.
+      The file provided by this API is in CSV format with the following columns:
+      * ZIP_CODE - The five digit zip code for this record.
+      * STATE_ABBREV - A valid two character US state abbreviation for this record. Zip codes may span multiple states.
+      * COUNTY_NAME - A valid county name for this record. Zip codes may span multiple counties.
+      * CITY_NAME - A valid city name for this record. Zip codes may span multiple cities.
+      * STATE_SALES_TAX - The state component of the sales tax rate.
+      * STATE_USE_TAX - The state component of the use tax rate.
+      * COUNTY_SALES_TAX - The county component of the sales tax rate.
+      * COUNTY_USE_TAX - The county component of the use tax rate.
+      * CITY_SALES_TAX - The city component of the sales tax rate.
+      * CITY_USE_TAX - The city component of the use tax rate.
+      * TOTAL_SALES_TAX - The total tax rate for sales tax for this postal code. This value may not equal the sum of the state/county/city due to special tax jurisdiction rules.
+      * TOTAL_USE_TAX - The total tax rate for use tax for this postal code. This value may not equal the sum of the state/county/city due to special tax jurisdiction rules.
+      * TAX_SHIPPING_ALONE - This column contains 'Y' if shipping is taxable.
+      * TAX_SHIPPING_AND_HANDLING_TOGETHER - This column contains 'Y' if shipping and handling are taxable when sent together.
       For more detailed tax content, please use the `BuildTaxContentFile` API which allows usage of exact items and exact locations.
     
       :param date [datetime] The date for which point-of-sale data would be calculated (today by default). Example input: 2016-12-31
@@ -5236,7 +5599,8 @@ class Mixin:
     """
     def download_tax_rates_by_zip_code(self, date, include=None):
         return requests.get('{}/api/v2/taxratesbyzipcode/download/{}'.format(self.base_url, date),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new tax rule
@@ -5253,7 +5617,8 @@ class Mixin:
     """
     def create_tax_rules(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/taxrules'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single tax rule
@@ -5266,7 +5631,8 @@ class Mixin:
     """
     def delete_tax_rule(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/taxrules/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single tax rule
@@ -5283,7 +5649,8 @@ class Mixin:
     """
     def get_tax_rule(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/taxrules/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve tax rules for this company
@@ -5306,7 +5673,8 @@ class Mixin:
     """
     def list_tax_rules(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/taxrules'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all tax rules
@@ -5328,7 +5696,8 @@ class Mixin:
     """
     def query_tax_rules(self, include=None):
         return requests.get('{}/api/v2/taxrules'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single tax rule
@@ -5348,7 +5717,8 @@ class Mixin:
     """
     def update_tax_rule(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/taxrules/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Add lines to an existing unlocked transaction
@@ -5376,7 +5746,8 @@ class Mixin:
     """
     def add_lines(self, model, include=None):
         return requests.post('{}/api/v2/companies/transactions/lines/add'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Correct a previously created transaction
@@ -5398,7 +5769,8 @@ class Mixin:
     """
     def adjust_transaction(self, companyCode, transactionCode, model, include=None):
         return requests.post('{}/api/v2/companies/{}/transactions/{}/adjust'.format(self.base_url, companyCode, transactionCode),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Get audit information about a transaction
@@ -5421,7 +5793,8 @@ class Mixin:
     """
     def audit_transaction(self, companyCode, transactionCode):
         return requests.get('{}/api/v2/companies/{}/transactions/{}/audit'.format(self.base_url, companyCode, transactionCode),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Get audit information about a transaction
@@ -5445,7 +5818,8 @@ class Mixin:
     """
     def audit_transaction_with_type(self, companyCode, transactionCode, documentType):
         return requests.get('{}/api/v2/companies/{}/transactions/{}/types/{}/audit'.format(self.base_url, companyCode, transactionCode, documentType),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Lock a set of documents
@@ -5461,7 +5835,8 @@ class Mixin:
     """
     def bulk_lock_transaction(self, model):
         return requests.post('{}/api/v2/transactions/lock'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Change a transaction's code
@@ -5482,7 +5857,8 @@ class Mixin:
     """
     def change_transaction_code(self, companyCode, transactionCode, model, include=None):
         return requests.post('{}/api/v2/companies/{}/transactions/{}/changecode'.format(self.base_url, companyCode, transactionCode),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Commit a transaction for reporting
@@ -5502,7 +5878,8 @@ class Mixin:
     """
     def commit_transaction(self, companyCode, transactionCode, model, include=None):
         return requests.post('{}/api/v2/companies/{}/transactions/{}/commit'.format(self.base_url, companyCode, transactionCode),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create or adjust a transaction
@@ -5535,7 +5912,8 @@ class Mixin:
     """
     def create_or_adjust_transaction(self, model, include=None):
         return requests.post('{}/api/v2/transactions/createoradjust'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new transaction
@@ -5572,7 +5950,8 @@ class Mixin:
     """
     def create_transaction(self, model, include=None):
         return requests.post('{}/api/v2/transactions/create'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Remove lines from an existing unlocked transaction
@@ -5597,7 +5976,8 @@ class Mixin:
     """
     def delete_lines(self, model, include=None):
         return requests.post('{}/api/v2/companies/transactions/lines/delete'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single transaction by code
@@ -5624,7 +6004,8 @@ class Mixin:
     """
     def get_transaction_by_code(self, companyCode, transactionCode, include=None):
         return requests.get('{}/api/v2/companies/{}/transactions/{}'.format(self.base_url, companyCode, transactionCode),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single transaction by code
@@ -5639,7 +6020,8 @@ class Mixin:
     """
     def get_transaction_by_code_and_type(self, companyCode, transactionCode, documentType, include=None):
         return requests.get('{}/api/v2/companies/{}/transactions/{}/types/{}'.format(self.base_url, companyCode, transactionCode, documentType),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single transaction by ID
@@ -5663,7 +6045,8 @@ class Mixin:
     """
     def get_transaction_by_id(self, id_, include=None):
         return requests.get('{}/api/v2/transactions/{}'.format(self.base_url, id_),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all transactions
@@ -5694,7 +6077,8 @@ class Mixin:
     """
     def list_transactions_by_company(self, companyCode, include=None):
         return requests.get('{}/api/v2/companies/{}/transactions'.format(self.base_url, companyCode),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Lock a single transaction
@@ -5715,7 +6099,8 @@ class Mixin:
     """
     def lock_transaction(self, companyCode, transactionCode, model, include=None):
         return requests.post('{}/api/v2/companies/{}/transactions/{}/lock'.format(self.base_url, companyCode, transactionCode),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a refund for a transaction
@@ -5754,7 +6139,8 @@ class Mixin:
     """
     def refund_transaction(self, companyCode, transactionCode, model, include=None):
         return requests.post('{}/api/v2/companies/{}/transactions/{}/refund'.format(self.base_url, companyCode, transactionCode),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Perform multiple actions on a transaction
@@ -5774,7 +6160,8 @@ class Mixin:
     """
     def settle_transaction(self, companyCode, transactionCode, model, include=None):
         return requests.post('{}/api/v2/companies/{}/transactions/{}/settle'.format(self.base_url, companyCode, transactionCode),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Uncommit a transaction for reporting
@@ -5790,7 +6177,8 @@ class Mixin:
     """
     def uncommit_transaction(self, companyCode, transactionCode, include=None):
         return requests.post('{}/api/v2/companies/{}/transactions/{}/uncommit'.format(self.base_url, companyCode, transactionCode),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Verify a transaction
@@ -5809,7 +6197,8 @@ class Mixin:
     """
     def verify_transaction(self, companyCode, transactionCode, model, include=None):
         return requests.post('{}/api/v2/companies/{}/transactions/{}/verify'.format(self.base_url, companyCode, transactionCode),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Void a transaction
@@ -5829,7 +6218,8 @@ class Mixin:
     """
     def void_transaction(self, companyCode, transactionCode, model, include=None):
         return requests.post('{}/api/v2/companies/{}/transactions/{}/void'.format(self.base_url, companyCode, transactionCode),
-                               auth=self.auth, headers=self.client_header, params=include, json=model)
+                               auth=self.auth, headers=self.client_header, params=include, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create a new UPC
@@ -5843,7 +6233,8 @@ class Mixin:
     """
     def create_u_p_cs(self, companyId, model):
         return requests.post('{}/api/v2/companies/{}/upcs'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Delete a single UPC
@@ -5856,7 +6247,8 @@ class Mixin:
     """
     def delete_u_p_c(self, companyId, id_):
         return requests.delete('{}/api/v2/companies/{}/upcs/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single UPC
@@ -5870,7 +6262,8 @@ class Mixin:
     """
     def get_u_p_c(self, companyId, id_):
         return requests.get('{}/api/v2/companies/{}/upcs/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve UPCs for this company
@@ -5890,7 +6283,8 @@ class Mixin:
     """
     def list_u_p_cs_by_company(self, companyId, include=None):
         return requests.get('{}/api/v2/companies/{}/upcs'.format(self.base_url, companyId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all UPCs
@@ -5909,7 +6303,8 @@ class Mixin:
     """
     def query_u_p_cs(self, include=None):
         return requests.get('{}/api/v2/upcs'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single UPC
@@ -5926,7 +6321,8 @@ class Mixin:
     """
     def update_u_p_c(self, companyId, id_, model):
         return requests.put('{}/api/v2/companies/{}/upcs/{}'.format(self.base_url, companyId, id_),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Create new users
@@ -5944,7 +6340,8 @@ class Mixin:
     """
     def create_users(self, accountId, model):
         return requests.post('{}/api/v2/accounts/{}/users'.format(self.base_url, accountId),
-                               auth=self.auth, headers=self.client_header, json=model)
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve a single user
@@ -5958,8 +6355,9 @@ class Mixin:
       :return UserModel
     """
     def get_user(self, id_, accountId, include=None):
-        return requests.get('{}/api/v2/accounts/{}/users/{}'.format(self.base_url, id_, accountId),
-                               auth=self.auth, headers=self.client_header, params=include)
+        return requests.get('{}/api/v2/accounts/{}/users/{}'.format(self.base_url, accountId, id_),
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all entitlements for a single user
@@ -5983,8 +6381,9 @@ class Mixin:
       :return UserEntitlementModel
     """
     def get_user_entitlements(self, id_, accountId):
-        return requests.get('{}/api/v2/accounts/{}/users/{}/entitlements'.format(self.base_url, id_, accountId),
-                               auth=self.auth, headers=self.client_header, params=None)
+        return requests.get('{}/api/v2/accounts/{}/users/{}/entitlements'.format(self.base_url, accountId, id_),
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Get information about a username.
@@ -5998,7 +6397,8 @@ class Mixin:
     """
     def get_username(self, include=None):
         return requests.get('{}/api/v2/usernames'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve users for this account
@@ -6020,7 +6420,8 @@ class Mixin:
     """
     def list_users_by_account(self, accountId, include=None):
         return requests.get('{}/api/v2/accounts/{}/users'.format(self.base_url, accountId),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Retrieve all users
@@ -6042,7 +6443,8 @@ class Mixin:
     """
     def query_users(self, include=None):
         return requests.get('{}/api/v2/users'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=include)
+                               auth=self.auth, headers=self.client_header, params=include, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Update a single user
@@ -6058,8 +6460,9 @@ class Mixin:
       :return UserModel
     """
     def update_user(self, id_, accountId, model):
-        return requests.put('{}/api/v2/accounts/{}/users/{}'.format(self.base_url, id_, accountId),
-                               auth=self.auth, headers=self.client_header, json=model)
+        return requests.put('{}/api/v2/accounts/{}/users/{}'.format(self.base_url, accountId, id_),
+                               auth=self.auth, headers=self.client_header, json=model, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Checks if the current user is subscribed to a specific service
@@ -6073,7 +6476,8 @@ class Mixin:
     """
     def get_my_subscription(self, serviceTypeId):
         return requests.get('{}/api/v2/utilities/subscriptions/{}'.format(self.base_url, serviceTypeId),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     List all services to which the current user is subscribed
@@ -6086,7 +6490,8 @@ class Mixin:
     """
     def list_my_subscriptions(self):
         return requests.get('{}/api/v2/utilities/subscriptions'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=None)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
 
     r"""
     Tests connectivity and version of the service
@@ -6101,5 +6506,7 @@ class Mixin:
     """
     def ping(self, timeout=None):
         return requests.get('{}/api/v2/utilities/ping'.format(self.base_url),
-                               auth=self.auth, headers=self.client_header, params=None, timeout=timeout if timeout else 10)
+                               auth=self.auth, headers=self.client_header, params=None, 
+                               timeout=self.timeout_limit if self.timeout_limit else 10)
+
  
